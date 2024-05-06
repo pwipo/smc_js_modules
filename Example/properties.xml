@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<properties>
+
+    <uuid>ExampleJS</uuid>
+    <provider>js</provider>
+    <ver>1.0.2</ver>
+    <apiVer>1.0.0</apiVer>
+    <author>Nikolay V. Ulyanov</author>
+    <contacts>ulianownv@mail.ru</contacts>
+    <homePage>http://www.smcsystem.ru</homePage>
+    <className>main.js::JsTest</className>
+    <categories>JavaScript, Example</categories>
+    <copyrightAndLicense>
+        <entry>
+            <key>en</key>
+            <value>The author and copyright holder is Nikolay V. Ulyanov.
+                The program is free for use.
+                Forbidden: changing the program code, its sale / resale, as well as other actions and rights not explicitly permitted.
+                The program is supplied as is. For problems arising during the operation or installation of the program, the author, developer and distributor are not
+                responsible.
+            </value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value>Автором и правообладателем является Ульянов Николай Владимирович.
+                Программа бесплатна для использования.
+                Запрещено: изменение кода программы, её продажа/перепродажа а так же иные не разрешенные явно действия и права.
+                Программа поставляется как есть. За проблемы, возникающие в процессе эксплуатации или установки программы, автор, разработчик и распространитель
+                ответственности не несут.
+            </value>
+        </entry>
+    </copyrightAndLicense>
+    <date>31-12-2020</date>
+
+    <defaultSettings>
+        <value>
+            <name>value</name>
+            <type>STRING</type>
+            <value>Hello world</value>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value>Значение будет возвращаться при каждом выполнении модуля.</value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value>The value will be returned each time the module is executed.</value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>param</name>
+            <type>STRING</type>
+            <value>test value</value>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value>Значение будет передаваться как аргумент при вызове управляемых контекстов исполнения.</value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value>The value will be passed as an argument when invoking managed execution contexts</value>
+                </entry>
+            </description>
+        </value>
+    </defaultSettings>
+
+    <types>
+        <type t="default" minS="0" maxS="-1" minEc="0" maxEC="-1" minC="0" maxC="-1">
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value>Контекст исполнения по умолчанию.</value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value>Default execution context.</value>
+                </entry>
+            </description>
+            <sources>
+                <source>
+                    <count>-1</count>
+                    <elements>
+                        <element vt="VALUE_ANY" c="-1" t="INTEGER" v="1"/>
+                    </elements>
+                </source>
+            </sources>
+            <output>
+                <element>
+                    <type>VALUE</type>
+                    <count>1</count>
+                    <valueType>INTEGER</valueType>
+                    <value>1</value>
+                    <description>
+                        <entry>
+                            <key>ru</key>
+                            <value>Счетчик вызовов.</value>
+                        </entry>
+                        <entry>
+                            <key>en</key>
+                            <value>Call counter.</value>
+                        </entry>
+                    </description>
+                </element>
+                <element vt="VALUE" c="1" t="STRING" v="value"/>
+                <element>
+                    <type>VALUE</type>
+                    <count>1</count>
+                    <valueType>STRING</valueType>
+                    <value>fileTextValue</value>
+                </element>
+                <element vt="VALUE_ANY" c="-1" t="INTEGER" v="1"/>
+            </output>
+        </type>
+    </types>
+
+    <useStorage>false</useStorage>
+
+    <threadSafe>true</threadSafe>
+
+    <description>
+        <entry>
+            <key>en</key>
+            <value>Module example.</value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value>Пример модуля.</value>
+        </entry>
+    </description>
+
+    <help>
+        <entry>
+            <key>en</key>
+            <value><![CDATA[Example module.
+Shows how to perform basic operations:
+    prints the call counter.
+    gets the setting value at startup and prints this value on each execution.
+    reads a text file in the home folder at startup and prints it as text at each execution.
+    receives data from sources and prints it.
+    starts managed execution contexts with parameter passing (setting: param), if contexts return data, then print it.
+    prints the names of the managed configurations.
+    on each call, creates a new configuration of a random type and inserts it into the first execution context of the first managed configuration (if possible, into each of those list types).
+            ]]></value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value><![CDATA[Пример модуля.
+Показывает, как выполнять основные операции:
+    печатает счетчтик вызовов.
+    получает значение настройки при старте и печатает это значение при каждом исполнении.
+    читает текстовый файл в домашней папке при старте и печатает его при каждом исполнении в виде текста.
+    полученает данные от источников и печатает их.
+    запускает управляемые контексты исполнения с передачей параметра (настройка: param), если контексты возвращают данные, то печатает их.
+    печатает имена управляемых конфигураций.
+    при каждом вызове создает новую конфигурацию случайного типа и вставляет её в первый контекст исполнения первой управляемой конфигурации (если возможно, в каждый из тех типов списков).
+            ]]></value>
+        </entry>
+    </help>
+
+    <examples>
+        <example>
+            <description>
+                <entry>
+                    <key>en</key>
+                    <value>First example.</value>
+                </entry>
+                <entry>
+                    <key>ru</key>
+                    <value>Первый пример.</value>
+                </entry>
+            </description>
+            <settings/>
+            <variables/>
+            <sources/>
+            <output>
+                <message t="INTEGER" v="1"/>
+                <message t="STRING" v="Hello world"/>
+                <message t="STRING" v="test message"/>
+            </output>
+            <countManagedExecutionContexts>0</countManagedExecutionContexts>
+            <countManagedConfigurations>0</countManagedConfigurations>
+        </example>
+        <example>
+            <description>
+                <entry>
+                    <key>en</key>
+                    <value>Second example. Connected source, managed execution context (returns value: 5), and managed configuration (name: test).</value>
+                </entry>
+                <entry>
+                    <key>ru</key>
+                    <value>Второй пример. Подключены источник, управляемый контекст исполнения (возвращает значение: 5) и управляемая конфтгурация (имя: test).</value>
+                </entry>
+            </description>
+            <settings/>
+            <variables/>
+            <sources>
+                <source>
+                    <actions>
+                        <action>
+                            <messages>
+                                <message>
+                                    <type>INTEGER</type>
+                                    <value>1</value>
+                                </message>
+                                <message>
+                                    <type>STRING</type>
+                                    <value>text</value>
+                                </message>
+                            </messages>
+                        </action>
+                    </actions>
+                </source>
+            </sources>
+            <output>
+                <message t="INTEGER" v="1"/>
+                <message t="STRING" v="Hello world"/>
+                <message t="STRING" v="test message"/>
+                <message t="INTEGER" v="1"/>
+                <message t="STRING" v="text"/>
+                <message t="INTEGER" v="5"/>
+                <message t="STRING" v="test"/>
+            </output>
+            <countManagedExecutionContexts>1</countManagedExecutionContexts>
+            <countManagedConfigurations>1</countManagedConfigurations>
+        </example>
+    </examples>
+
+
+</properties>
