@@ -1,3 +1,8 @@
+/**
+ * created by Nikolay V. Ulyanov (ulianownv@mail.ru)
+ * http://www.smcsystem.ru
+ */
+
 JsTest = function () {
     SMCApi.Module.call(this);
 
