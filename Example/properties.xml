@@ -3,7 +3,7 @@
 
     <uuid>ExampleJS</uuid>
     <provider>js</provider>
-    <ver>1.0.3</ver>
+    <ver>1.0.4</ver>
     <apiVer>1.0.0</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
@@ -13,21 +13,21 @@
     <copyrightAndLicense>
         <entry>
             <key>en</key>
-            <value>The author and copyright holder is Nikolay V. Ulyanov.
-                The program is free for use.
-                Forbidden: changing the program code, its sale / resale, as well as other actions and rights not explicitly permitted.
-                The program is supplied as is. For problems arising during the operation or installation of the program, the author, developer and distributor are not
-                responsible.
-            </value>
+            <value><![CDATA[The author and copyright holder is Nikolay V. Ulyanov.
+The program is free for use.
+Forbidden: changing the program code, its sale / resale, as well as other actions and rights not explicitly permitted.
+The program is supplied as is. For problems arising during the operation or installation of the program, the author, developer and distributor are not
+responsible.
+            ]]></value>
         </entry>
         <entry>
             <key>ru</key>
-            <value>Автором и правообладателем является Ульянов Николай Владимирович.
-                Программа бесплатна для использования.
-                Запрещено: изменение кода программы, её продажа/перепродажа а так же иные не разрешенные явно действия и права.
-                Программа поставляется как есть. За проблемы, возникающие в процессе эксплуатации или установки программы, автор, разработчик и распространитель
-                ответственности не несут.
-            </value>
+            <value><![CDATA[Автором и правообладателем является Ульянов Николай Владимирович.
+Программа бесплатна для использования.
+Запрещено: изменение кода программы, её продажа/перепродажа а так же иные не разрешенные явно действия и права.
+Программа поставляется как есть. За проблемы, возникающие в процессе эксплуатации или установки программы, автор, разработчик и распространитель
+ответственности не несут.
+            ]]></value>
         </entry>
     </copyrightAndLicense>
     <date>31-12-2020</date>
@@ -37,30 +37,23 @@
             <name>value</name>
             <type>STRING</type>
             <value>Hello world</value>
+            <subType>STRING</subType>
             <description>
                 <entry>
                     <key>ru</key>
                     <value>Значение будет возвращаться при каждом выполнении модуля.</value>
                 </entry>
-                <entry>
-                    <key>en</key>
-                    <value>The value will be returned each time the module is executed.</value>
-                </entry>
+                <entry k="en" v="The value will be returned each time the module is executed."/>
             </description>
         </value>
         <value>
             <name>param</name>
             <type>STRING</type>
             <value>test value</value>
+            <subType>STRING</subType>
             <description>
-                <entry>
-                    <key>ru</key>
-                    <value>Значение будет передаваться как аргумент при вызове управляемых контекстов исполнения.</value>
-                </entry>
-                <entry>
-                    <key>en</key>
-                    <value>The value will be passed as an argument when invoking managed execution contexts</value>
-                </entry>
+                <entry k="ru" v="Значение будет передаваться как аргумент при вызове управляемых контекстов исполнения."/>
+                <entry k="en" v="The value will be passed as an argument when invoking managed execution contexts"/>
             </description>
         </value>
     </defaultSettings>
@@ -68,14 +61,8 @@
     <types>
         <type t="default" minS="0" maxS="-1" minEc="0" maxEC="-1" minC="0" maxC="-1">
             <description>
-                <entry>
-                    <key>ru</key>
-                    <value>Контекст исполнения по умолчанию.</value>
-                </entry>
-                <entry>
-                    <key>en</key>
-                    <value>Default execution context.</value>
-                </entry>
+                <entry k="ru" v="Контекст исполнения по умолчанию."/>
+                <entry k="en" v="Default execution context."/>
             </description>
             <sources>
                 <source>
@@ -96,10 +83,7 @@
                             <key>ru</key>
                             <value>Счетчик вызовов.</value>
                         </entry>
-                        <entry>
-                            <key>en</key>
-                            <value>Call counter.</value>
-                        </entry>
+                        <entry k="en" v="Call counter."/>
                     </description>
                 </element>
                 <element vt="VALUE" c="1" t="STRING" v="value"/>
@@ -115,7 +99,6 @@
     </types>
 
     <useStorage>false</useStorage>
-
     <threadSafe>true</threadSafe>
 
     <description>
@@ -225,6 +208,6 @@ Shows how to perform basic operations:
             <countManagedConfigurations>1</countManagedConfigurations>
         </example>
     </examples>
-
+    <icon>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</icon>
 
 </properties>
