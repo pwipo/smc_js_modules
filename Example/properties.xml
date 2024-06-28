@@ -4,7 +4,7 @@
     <uuid>ExampleJS</uuid>
     <provider>js</provider>
     <ver>1.0.4</ver>
-    <apiVer>1.0.0</apiVer>
+    <apiVer>1.4.0</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
     <homePage>http://www.smcsystem.ru</homePage>
@@ -68,7 +68,7 @@ responsible.
                 <source>
                     <count>-1</count>
                     <elements>
-                        <element vt="VALUE_ANY" c="-1" t="INTEGER" v="1"/>
+                        <element t="VALUE_ANY" c="-1" vt="INTEGER" v="1"/>
                     </elements>
                 </source>
             </sources>
@@ -86,14 +86,14 @@ responsible.
                         <entry k="en" v="Call counter."/>
                     </description>
                 </element>
-                <element vt="VALUE" c="1" t="STRING" v="value"/>
+                <element t="VALUE" c="1" vt="STRING" v="value"/>
                 <element>
                     <type>VALUE</type>
                     <count>1</count>
                     <valueType>STRING</valueType>
                     <value>fileTextValue</value>
                 </element>
-                <element vt="VALUE_ANY" c="-1" t="INTEGER" v="1"/>
+                <element t="VALUE_ANY" c="-1" vt="INTEGER" v="1"/>
             </output>
         </type>
     </types>
