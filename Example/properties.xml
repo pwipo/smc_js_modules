@@ -59,7 +59,7 @@ responsible.
     </defaultSettings>
 
     <types>
-        <type t="default" minS="0" maxS="-1" minEc="0" maxEC="-1" minC="0" maxC="-1">
+        <type t="default" minS="0" maxS="-1" minEC="0" maxEC="-1" minC="0" maxC="-1">
             <description>
                 <entry k="ru" v="Контекст исполнения по умолчанию."/>
                 <entry k="en" v="Default execution context."/>
