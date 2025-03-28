@@ -3,8 +3,8 @@
 
     <uuid>ExampleJS</uuid>
     <provider>js</provider>
-    <ver>1.0.4</ver>
-    <apiVer>1.4.0</apiVer>
+    <ver>1.0.5</ver>
+    <apiVer>1.4.2</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
     <homePage>http://www.smcsystem.ru</homePage>
@@ -30,7 +30,7 @@ responsible.
             ]]></value>
         </entry>
     </copyrightAndLicense>
-    <date>31-12-2020</date>
+    <date>27-03-2025</date>
 
     <defaultSettings>
         <value>
@@ -100,6 +100,8 @@ responsible.
 
     <useStorage>false</useStorage>
     <threadSafe>true</threadSafe>
+    <useVariables>false</useVariables>
+    <useManagement>true</useManagement>
 
     <description>
         <entry>
