@@ -35,15 +35,20 @@ const process = new SmcEmulator.Process(
         "test",
         null,
         new Map([
-            ["configuration", new SmcEmulator.Value("{func: (configurationTool, executionContextTool, messagesList) => {" +
-                "    if (messagesList.length === 0)\n" +
+            ["configuration", new SmcEmulator.Value("    if (messagesList.length === 0)\n" +
                 "        return;\n" +
                 "    let messages = messagesList[0];\n" +
                 "    if (messages.length === 0)\n" +
                 "        return;\n" +
-                "    let v1 = SmcUtils.toString(messages.shift());\n" +
-                "\texecutionContextTool.addMessage(`- ${v1} -`);\n" +
-                "}}")],
+                "    let v1 = SmcUtils.getString(messages.shift());\n" +
+                "    let v2 = SmcUtils.toNumber(messages.shift());\n" +
+                "    if (v1 && v2) {\n" +
+                "        executionContextTool.addMessage(`${v1} ${v2}`)\n" +
+                "    } else {\n" +
+                "        let e = new Error(\"Need params\");\n" +
+                "        e.code = 4;\n" +
+                "        throw e;\n" +
+                "    }\n")],
         ])
     ), new JsFactory());
 

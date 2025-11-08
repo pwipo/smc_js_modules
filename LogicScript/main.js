@@ -20,7 +20,7 @@ JsFactory = function () {
      */
     this.start = function (configurationTool) {
         /** @type {{func: JsFactory.Processor}} */
-        this.configuration = eval("(" + SmcUtils.getString(configurationTool.getSetting("configuration")) + ")");
+        this.configuration = eval("({func: (configurationTool, executionContextTool, messagesList) => {" + SmcUtils.getString(configurationTool.getSetting("configuration")) + "}})");
         if (!this.configuration.func)
             throw new SMCApi.ModuleException("need configuration object with property func")
     };
