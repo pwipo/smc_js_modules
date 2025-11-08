@@ -1,0 +1,79 @@
+require("../api/SmcApi.js");
+require("../api/SmcUtils.js");
+require("../api/SmcEmulator.js");
+require("./main.js");
+// import JsFactory from "main.js"
+// console.log(SmcEmulator.value);
+
+/**
+ * @param configurationTool    {SMCApi.ConfigurationTool}
+ * @param executionContextTool {SMCApi.ExecutionContextTool}
+ * @param messagesList {(SMCApi.IMessage[])[]}
+ */
+let func = function (configurationTool, executionContextTool, messagesList) {
+    if (messagesList.length === 0)
+        return;
+    let messages = messagesList[0];
+    if (messages.length === 0)
+        return;
+    let v1 = SmcUtils.getString(messages.shift());
+    let v2 = SmcUtils.toNumber(messages.shift());
+    if (v1 && v2) {
+        executionContextTool.addMessage(`${v1} ${v2}`)
+    } else {
+        let e = new Error("Need params");
+        e.code = 4;
+        throw e;
+    }
+}
+
+const process = new SmcEmulator.Process(
+    new SmcEmulator.ConfigurationTool(
+        null,
+        null,
+        null,
+        "test",
+        null,
+        new Map([
+            ["configuration", new SmcEmulator.Value("{func: (configurationTool, executionContextTool, messagesList) => {" +
+                "    if (messagesList.length === 0)\n" +
+                "        return;\n" +
+                "    let messages = messagesList[0];\n" +
+                "    if (messages.length === 0)\n" +
+                "        return;\n" +
+                "    let v1 = SmcUtils.toString(messages.shift());\n" +
+                "\texecutionContextTool.addMessage(`- ${v1} -`);\n" +
+                "}}")],
+        ])
+    ), new JsFactory());
+
+process.start();
+
+let executionContextTool = new SmcEmulator.ExecutionContextTool(
+    [
+        [
+            new SmcEmulator.Action([
+                new SmcEmulator.Message(new SmcEmulator.Value("str")),
+                new SmcEmulator.Message(new SmcEmulator.Value(3))
+            ])
+        ]
+    ]
+);
+let output = process.execute(executionContextTool);
+output.forEach(m => console.log(`${m.getMessageType()}: ${m.getType()} - ${m.getValue()}`));
+executionContextTool.output = [];
+
+executionContextTool = new SmcEmulator.ExecutionContextTool(
+    [
+        [
+            new SmcEmulator.Action([
+                new SmcEmulator.Message(new SmcEmulator.Value(100))
+            ])
+        ]
+    ]
+);
+output = process.execute(executionContextTool);
+output.forEach(m => console.log(`${m.getMessageType()}: ${m.getType()} - ${m.getValue()}`));
+executionContextTool.output = [];
+
+process.stop();

@@ -1,8 +1,8 @@
-require("SmcApi.js");
-require("SmcUtils.js");
-require("SmcEmulator.js");
+require("../api/SmcApi.js");
+require("../api/SmcUtils.js");
+require("../api/SmcEmulator.js");
 // import JsTest from "main.js"
-require("main.js");
+require("./main.js");
 // require("SmcEmulator.js")
 // console.log(SmcEmulator.value);
 

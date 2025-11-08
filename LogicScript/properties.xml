@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<properties>
+
+    <uuid>LogicScript</uuid>
+    <provider>js</provider>
+    <ver>1.0.0</ver>
+    <apiVer>1.4.2</apiVer>
+    <author>Nikolay V. Ulyanov</author>
+    <contacts>ulianownv@mail.ru</contacts>
+    <homePage>https://www.shelfmc.ru</homePage>
+    <className>main.js::JsFactory</className>
+    <categories>Logic, JavaScript</categories>
+    <copyrightAndLicense>
+        <entry>
+            <key>en</key>
+            <value><![CDATA[The author and copyright holder is Nikolay V. Ulyanov.
+The program is free for use.
+Forbidden: changing the program code, its sale / resale, as well as other actions and rights not explicitly permitted.
+The program is supplied as is. For problems arising during the operation or installation of the program, the author, developer and distributor are not
+responsible.
+            ]]></value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value><![CDATA[Автором и правообладателем является Ульянов Николай Владимирович.
+Программа бесплатна для использования.
+Запрещено: изменение кода программы, её продажа/перепродажа а так же иные не разрешенные явно действия и права.
+Программа поставляется как есть. За проблемы, возникающие в процессе эксплуатации или установки программы, автор, разработчик и распространитель
+ответственности не несут.
+            ]]></value>
+        </entry>
+    </copyrightAndLicense>
+    <date>08-11-2025</date>
+
+    <defaultSettings>
+        <value>
+            <name>configuration</name>
+            <type>STRING</type>
+            <value><![CDATA[{func: (configurationTool, executionContextTool, messagesList) => {
+    if (messagesList.length === 0)
+        return;
+    let messages = messagesList[0];
+    if (messages.length === 0)
+        return;
+    let v1 = SmcUtils.toString(messages.shift());
+	executionContextTool.addMessage(`- ${v1} -`);
+}}
+         ]]></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Конфигурация на языке js, содержит объект с полем func, которой передается управление.
+Функция принимает 3 параметра: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+Если кидает исключение, то оно логируется и текст преобразуется в ошибку.
+При этом, если у исключения есть поле code, содержащем число, то оно так же выводится (удобно для работы с модулем HttpServer).
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[The JS configuration contains an object with a func field, to which control is transferred.
+The function takes three parameters: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+If an exception is thrown, it is logged and the text is converted to an error.
+If the exception has a code field containing a number, it is also displayed (convenient for working with the HttpServer module).
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+    </defaultSettings>
+
+    <types>
+        <type t="default" minS="0" maxS="-1" minEc="0" maxEC="1" minC="0" maxC="-1">
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value>Принимает любое количество параметров и передает управление коду, установленном в настройке configuration.</value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value>Accepts any number of parameters and passes control to the code specified in the configuration setting.</value>
+                </entry>
+            </description>
+            <sources>
+                <source с="-1">
+                    <elements>
+                        <element t="VALUE_ANY" c="-1" vt="STRING" v="str"/>
+                    </elements>
+                </source>
+            </sources>
+            <output>
+                <element t="VALUE_ANY" c="-1" vt="STRING" v="- str -"/>
+            </output>
+        </type>
+    </types>
+
+    <useStorage>false</useStorage>
+    <threadSafe>true</threadSafe>
+    <useVariables>true</useVariables>
+    <useManagement>true</useManagement>
+
+    <description>
+        <entry>
+            <key>en</key>
+            <value>A module for executing custom logic defined using JavaScript code.</value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value>Модуль для исполнения настраиваемой логики, заданную с помощью кода на JavaScript.</value>
+        </entry>
+    </description>
+
+    <help>
+        <entry>
+            <key>en</key>
+            <value><![CDATA[A module for executing custom logic defined using JavaScript code.
+In the configuration setting, you must specify an object with a func field containing a function. Control will be transferred to this object whenever the context is called.
+The function takes three parameters: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+More information about the SMCApi package can be found in the documentation or on GitHub: https://github.com/pwipo/smc_api_js
+This is convenient for cases where writing logic in the configuration would be time-consuming, and creating a separate module for unique logic is impractical.
+For example, it is well suited for processing web requests.
+            ]]></value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value><![CDATA[Модуль для исполнения настраиваемой логики, заданную с помощью кода на JavaScript.
+В настройке configuration нужно указать объект в полем func, содержащем функцию. Туда будет передано управление при любом вызове контекста.
+Функция принимает 3 параметра: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+Подробнее о пакете SMCApi можно посмотреть в документации или на GitHub: https://github.com/pwipo/smc_api_js
+Удобно использовать в случаях, когда прописывать логику черед конфигурации долго, а создавать отдельный модуль для уникальной логики не уместно.
+Например, хорошо подходит для обработки веб запросов.
+        ]]></value>
+        </entry>
+    </help>
+
+    <examples/>
+    <icon/>
+
+</properties>
