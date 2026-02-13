@@ -3,8 +3,8 @@
 
     <uuid>LogicScript</uuid>
     <provider>js</provider>
-    <ver>1.0.1</ver>
-    <apiVer>1.4.2</apiVer>
+    <ver>1.0.2</ver>
+    <apiVer>1.4.3</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
     <homePage>https://www.shelfmc.ru</homePage>
@@ -67,7 +67,7 @@ If the exception has a code field containing a number, it is also displayed (con
     </defaultSettings>
 
     <types>
-        <type t="default" minS="0" maxS="-1" minEc="0" maxEC="1" minC="0" maxC="-1">
+        <type t="default" minS="0" maxS="-1" minEc="0" maxEC="-1" minC="0" maxC="-1">
             <description>
                 <entry>
                     <key>ru</key>
@@ -91,7 +91,7 @@ If the exception has a code field containing a number, it is also displayed (con
         </type>
     </types>
 
-    <useStorage>false</useStorage>
+    <useStorage>true</useStorage>
     <threadSafe>true</threadSafe>
     <useVariables>true</useVariables>
     <useManagement>true</useManagement>
