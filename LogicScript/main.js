@@ -19,10 +19,18 @@ JsFactory = function () {
      * @param configurationTool    {SMCApi.ConfigurationTool}
      */
     this.start = function (configurationTool) {
+        /** @type Map[string, Object]*/
+        this.cache = new Map();
         /** @type {{func: JsFactory.Processor}} */
-        this.configuration = eval("({func: (configurationTool, executionContextTool, messagesList) => {" + SmcUtils.getString(configurationTool.getSetting("configuration")) + "}})");
+        this.configuration = eval("({func: (configurationTool, executionContextTool, messagesList, cache) => {" + SmcUtils.getString(configurationTool.getSetting("configuration")) + "}})");
         if (!this.configuration.func)
-            throw new SMCApi.ModuleException("need configuration object with property func")
+            throw new SMCApi.ModuleException("need configuration object with property func");
+        let initStr = SmcUtils.getString(configurationTool.getSetting("init"));
+        if (initStr && initStr.trim()) {
+            const initFunc = eval("({func: (configurationTool, cache) => {" + initStr.trim() + "}})");
+            if (initFunc.func)
+                initFunc.func(configurationTool, this.cache);
+        }
     };
 
     /**
@@ -41,7 +49,7 @@ JsFactory = function () {
         const that = this;
         SmcUtils.processMessagesAll(configurationTool, executionContextTool, (id, messagesList) => {
             try {
-                that.configuration.func(configurationTool, executionContextTool, messagesList);
+                that.configuration.func(configurationTool, executionContextTool, messagesList, this.cache);
             } catch (ex) {
                 if (ex.code) {
                     executionContextTool.addError(ex.message);
@@ -61,6 +69,7 @@ JsFactory = function () {
     this.stop = function (configurationTool) {
         /** @type {{func: JsFactory.Processor}} */
         this.configuration = null;
+        this.cache = null;
     };
 
 }

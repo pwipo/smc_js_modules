@@ -3,7 +3,7 @@
 
     <uuid>LogicScript</uuid>
     <provider>js</provider>
-    <ver>1.0.2</ver>
+    <ver>1.0.3</ver>
     <apiVer>1.4.3</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
@@ -49,7 +49,11 @@ executionContextTool.addMessage(`- ${v1} -`);
                 <entry>
                     <key>ru</key>
                     <value><![CDATA[Конфигурация на языке js, содержит код, которому передается управление при вызове контекста.
-Коду доступны 3 переменные: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+Коду доступны 4 переменные:
+    configurationTool {SMCApi.ConfigurationTool} - содержит ссылку на объект API ConfigurationTool,
+    executionContextTool {SMCApi.ExecutionContextTool} - содержит ссылку на объект API ExecutionContextTool,
+    messagesList {(SMCApi.IMessage[])[]} - содержит все входящие сообщения со всех источников,
+    cache {Map[string, Object]} - содержит кеш, где могут храниться любые данные. Стирается при каждом старте/остановке конфигурации.
 Если кидает исключение, то оно логируется и текст преобразуется в ошибку.
 При этом, если у исключения есть поле code, содержащем число, то оно так же выводится (удобно для работы с модулем HttpServer).
                 ]]></value>
@@ -57,9 +61,33 @@ executionContextTool.addMessage(`- ${v1} -`);
                 <entry>
                     <key>en</key>
                     <value><![CDATA[The JS configuration contains the code to which control is transferred when the context is invoked.
-The code has access to three variables: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+The code has access to four variables:
+    configurationTool {SMCApi.ConfigurationTool} - contains a reference to the ConfigurationTool API object,
+    executionContextTool {SMCApi.ExecutionContextTool} - contains a reference to the ExecutionContextTool API object,
+    messagesList {(SMCApi.IMessage[])[]} - contains all incoming messages from all sources,
+    cache {Map[string, Object]} - contains a cache that can store any data. Cleared each time the configuration is started/stopped.
 If an exception is thrown, it is logged and the text is converted to an error.
 If the exception has a code field containing a number, it is also displayed (convenient for working with the HttpServer module).
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>init</name>
+            <type>STRING</type>
+            <value></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Аналогична настройке configuration, но запускается при старте конфигурации.
+Принимает 2 параметра: configurationTool {SMCApi.ConfigurationTool}, cache {Map[string, Object]}
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Similar to the configuration setting, but runs when the configuration starts.
+Takes two parameters: configurationTool {SMCApi.ConfigurationTool}, cache {Map[string, Object]}
                 ]]></value>
                 </entry>
             </description>
@@ -112,7 +140,15 @@ If the exception has a code field containing a number, it is also displayed (con
             <key>en</key>
             <value><![CDATA[A module for executing custom logic defined using JavaScript code.
 The configuration setting requires JavaScript code. Control will be transferred to it whenever the context is called.
-The code has access to three variables: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+The code has access to four variables:
+    configurationTool {SMCApi.ConfigurationTool},
+    executionContextTool {SMCApi.ExecutionContextTool},
+    messagesList {(SMCApi.IMessage[])[]},
+    cache {Map[string, Object]}
+In the init setting, similar to the configuration, you can specify JavaScript code. It will be executed when the configuration starts.
+The code has access to two variables:
+    configurationTool {SMCApi.ConfigurationTool},
+    cache {Map[string, Object]}
 More information about the SMCApi package can be found in the documentation or on GitHub: https://github.com/pwipo/smc_api_js
 This is convenient for cases where writing logic in the configuration would be time-consuming, and creating a separate module for unique logic is impractical.
 For example, it is well suited for processing web requests.
@@ -122,7 +158,15 @@ For example, it is well suited for processing web requests.
             <key>ru</key>
             <value><![CDATA[Модуль для исполнения настраиваемой логики, заданную с помощью кода на JavaScript.
 В настройке configuration нужно указать код на JavaScript. Туда будет передано управление при любом вызове контекста.
-Коду доступны 3 переменные: configurationTool {SMCApi.ConfigurationTool}, executionContextTool {SMCApi.ExecutionContextTool}, messagesList {(SMCApi.IMessage[])[]}
+Коду доступны 4 переменные:
+    configurationTool {SMCApi.ConfigurationTool},
+    executionContextTool {SMCApi.ExecutionContextTool},
+    messagesList {(SMCApi.IMessage[])[]},
+    cache {Map[string, Object]}
+В настройке init, аналогично configuration,  можно указать код на JavaScript. Он будет исполняться при старте конфигурации.
+Коду доступны 2 переменные:
+    configurationTool {SMCApi.ConfigurationTool},
+    cache {Map[string, Object]}
 Подробнее о пакете SMCApi можно посмотреть в документации или на GitHub: https://github.com/pwipo/smc_api_js
 Удобно использовать в случаях, когда прописывать логику черед конфигурации долго, а создавать отдельный модуль для уникальной логики не уместно.
 Например, хорошо подходит для обработки веб запросов.

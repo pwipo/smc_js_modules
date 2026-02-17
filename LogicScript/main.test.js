@@ -10,7 +10,7 @@ require("./main.js");
  * @param executionContextTool {SMCApi.ExecutionContextTool}
  * @param messagesList {(SMCApi.IMessage[])[]}
  */
-let func = function (configurationTool, executionContextTool, messagesList) {
+const func = function (configurationTool, executionContextTool, messagesList) {
     if (messagesList.length === 0)
         return;
     let messages = messagesList[0];
@@ -25,7 +25,7 @@ let func = function (configurationTool, executionContextTool, messagesList) {
         e.code = 4;
         throw e;
     }
-}
+};
 
 const process = new SmcEmulator.Process(
     new SmcEmulator.ConfigurationTool(
@@ -42,13 +42,15 @@ const process = new SmcEmulator.Process(
                 "        return;\n" +
                 "    let v1 = SmcUtils.getString(messages.shift());\n" +
                 "    let v2 = SmcUtils.toNumber(messages.shift());\n" +
+                "    let v3 = cache.get(\"v1\");\n" +
                 "    if (v1 && v2) {\n" +
-                "        executionContextTool.addMessage(`${v1} ${v2}`)\n" +
+                "        executionContextTool.addMessage(`${v1} ${v2} ${v3}`)\n" +
                 "    } else {\n" +
                 "        let e = new Error(\"Need params\");\n" +
                 "        e.code = 4;\n" +
                 "        throw e;\n" +
                 "    }\n")],
+            ["init", new SmcEmulator.Value("cache.set(\"v1\", 123);")],
         ])
     ), new JsFactory());
 
