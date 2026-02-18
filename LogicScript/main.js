@@ -49,7 +49,7 @@ JsFactory = function () {
         const that = this;
         SmcUtils.processMessagesAll(configurationTool, executionContextTool, (id, messagesList) => {
             try {
-                that.configuration.func(configurationTool, executionContextTool, messagesList, this.cache);
+                that.configuration.func(configurationTool, executionContextTool, messagesList, that.cache);
             } catch (ex) {
                 if (ex.code) {
                     executionContextTool.addError(ex.message);
