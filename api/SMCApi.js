@@ -274,7 +274,7 @@ SMCApi.ObjectField = function (name, value, type) {
      * @param {SMCApi.ObjectType}  [type]
      */
     this.setValue = function (value, type) {
-        this.value = value
+        this.value = value;
 
         if (typeof type === undefined || type == null) {
             let valueType = undefined;
@@ -284,10 +284,10 @@ SMCApi.ObjectField = function (name, value, type) {
                 } else if (value instanceof SMCApi.ObjectElement) {
                     valueType = SMCApi.ObjectType.OBJECT_ELEMENT;
                 } else if (value instanceof SMCApi.ObjectField) {
-                    this.type = value.getType()
-                    this.value = value.getValue()
+                    this.type = value.getType();
+                    this.value = value.getValue();
                 } else if (value instanceof SMCApi.IValue) {
-                    this.type = SMCApi.ObjectType[value.getType()]
+                    this.type = SMCApi.ObjectType[value.getType()];
                     this.value = value.getValue()
                 } else if (Object.prototype.toString.call(value) === "[object String]") {
                     valueType = SMCApi.ObjectType.STRING;
@@ -304,7 +304,7 @@ SMCApi.ObjectField = function (name, value, type) {
                     valueType = value === intValue ? SMCApi.ValueType.LONG : SMCApi.ValueType.DOUBLE;
                 } else {
                     valueType = SMCApi.ObjectType.DOUBLE;
-                    this.value = value.doubleValue ? value.doubleValue() : 0
+                    this.value = value.doubleValue ? value.doubleValue() : 0;
                 }
             }
             if (valueType == null)
@@ -314,11 +314,11 @@ SMCApi.ObjectField = function (name, value, type) {
             this.type = type;
             if (typeof value !== undefined && value != null) {
                 if (value instanceof SMCApi.ObjectField) {
-                    this.type = value.getType()
-                    this.value = value.getValue()
+                    this.type = value.getType();
+                    this.value = value.getValue();
                 } else if (value instanceof SMCApi.IValue) {
-                    this.type = SMCApi.ObjectType[value.getType()]
-                    this.value = value.getValue()
+                    this.type = SMCApi.ObjectType[value.getType()];
+                    this.value = value.getValue();
                 }
             }
         }
@@ -362,7 +362,7 @@ SMCApi.ObjectField = function (name, value, type) {
     SMCApi.ObjectField.prototype.toString = function () {
         return `${this.type} ${this.namev}=${this.value}`;
     };
-}
+};
 
 /**
  * ObjectElement
@@ -379,7 +379,7 @@ SMCApi.ObjectElement = function (fields) {
      */
     this.getFields = function () {
         return this.fields;
-    }
+    };
     /**
      * findField
      * @param name {string}
@@ -392,7 +392,7 @@ SMCApi.ObjectElement = function (fields) {
         }
         // return this.fields.find(v => v.namev === name);
         return null;
-    }
+    };
     /**
      * findFieldIgnoreCase
      * @param name {string}
@@ -405,18 +405,18 @@ SMCApi.ObjectElement = function (fields) {
         }
         // return this.fields.find(v => v.namev.toUpperCase() === name.toUpperCase());
         return null;
-    }
+    };
     /**
      * isSimple
      * @return {boolean}
      */
     this.isSimple = function () {
         return !this.fields.some(v => !v.isSimple());
-    }
+    };
     SMCApi.ObjectElement.prototype.toString = function () {
         return `{count=${this.fields.length}, fields=[${this.fields}]}`;
     }
-}
+};
 
 /**
  * ObjectArray
@@ -426,9 +426,8 @@ SMCApi.ObjectElement = function (fields) {
  */
 SMCApi.ObjectArray = function (typev, objects) {
     typev = typev || SMCApi.ObjectType.OBJECT_ELEMENT;
-    this.type = typev
-    this.objects = []
-    const that = this;
+    this.type = typev;
+    this.objects = [];
 
     /**
      *
@@ -467,17 +466,17 @@ SMCApi.ObjectArray = function (typev, objects) {
             if (value !== false && value !== true)
                 throw new SMCApi.ModuleException('wrong obj type');
         }
-    }
+    };
     /**
      * size
      * @return {number}
      */
     this.size = function () {
         return this.objects.length;
-    }
+    };
     this.get = function (id) {
         return this.objects[id];
-    }
+    };
     this.add = function (obj) {
         if (obj instanceof SMCApi.ObjectField) {
             obj = obj.getValue();
@@ -486,7 +485,7 @@ SMCApi.ObjectArray = function (typev, objects) {
         }
         this.check(obj);
         this.objects.push(obj);
-    }
+    };
     this.set = function (id, obj) {
         if (obj instanceof SMCApi.ObjectField) {
             obj = obj.getValue();
@@ -495,33 +494,33 @@ SMCApi.ObjectArray = function (typev, objects) {
         }
         this.check(obj);
         this.objects[id] = obj;
-    }
+    };
     this.remove = function (id) {
         delete this.objects.splice(id, 1);
-    }
+    };
     /**
      * getType
      * @return {SMCApi.ObjectType}
      */
     this.getType = function () {
         return this.type;
-    }
+    };
     /**
      * isSimple
      * @return {boolean}
      */
     this.isSimple = function () {
         return SMCApi.ObjectType.OBJECT_ARRAY !== this.type && SMCApi.ObjectType.OBJECT_ELEMENT !== this.type;
-    }
+    };
     SMCApi.ObjectArray.prototype.toString = function () {
         return `[size=${this.objects.length}, objects=[${this.objects}], type=${this.type}]`;
-    }
+    };
 
     if (typeof objects !== undefined && Array.isArray(objects)) {
         for (let obj of objects)
             this.add(obj);
     }
-}
+};
 
 
 /**
@@ -744,7 +743,7 @@ SMCApi.CFG.IContainerManaged = function () {
      */
     this.removeContainer = function (id) {
         throw new SMCApi.ModuleException('function not implemented');
-    }
+    };
 
     /**
      * get child configuration as managed

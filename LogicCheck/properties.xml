@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<properties>
+
+    <uuid>LogicCheck</uuid>
+    <provider>js</provider>
+    <ver>1.0.0</ver>
+    <apiVer>1.4.3</apiVer>
+    <author>Nikolay V. Ulyanov</author>
+    <contacts>ulianownv@mail.ru</contacts>
+    <homePage>https://www.shelfmc.ru</homePage>
+    <className>main.js::JsFactory</className>
+    <categories>JavaScript, Logic</categories>
+    <copyrightAndLicense>
+        <entry>
+            <key>en</key>
+            <value><![CDATA[The author and copyright holder is Nikolay V. Ulyanov.
+The program is free for use.
+Forbidden: changing the program code, its sale / resale, as well as other actions and rights not explicitly permitted.
+The program is supplied as is. For problems arising during the operation or installation of the program, the author, developer and distributor are not
+responsible.
+            ]]></value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value><![CDATA[Автором и правообладателем является Ульянов Николай Владимирович.
+Программа бесплатна для использования.
+Запрещено: изменение кода программы, её продажа/перепродажа а так же иные не разрешенные явно действия и права.
+Программа поставляется как есть. За проблемы, возникающие в процессе эксплуатации или установки программы, автор, разработчик и распространитель
+ответственности не несут.
+            ]]></value>
+        </entry>
+    </copyrightAndLicense>
+    <date>24-04-2026</date>
+
+    <defaultSettings>
+        <value>
+            <name>configuration</name>
+            <type>OBJECT_ARRAY</type>
+            <value>
+                <![CDATA[[{params: "inputs ? inputs[0] : 1, inputs && inputs.length>1 ? inputs[1] : 2", check: "lst[0] && lst[0][0]===3", error: "error one"}]]]></value>
+            <subtype>TABLE</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Список конфигураций. Каждая конфигурация представляет собой объект с несколькими полями, часть из которых представляют собой выражения на языке javascript.
+Объекты конфигураций имеют 3 поля:
+    params - содержит параметры, передаваемые соответствющему контексту при вызове. Параметры должны быть разделены запятой. Выражение написано на языке javascript. Доступны переменные:
+        inputs - содержит массив входящих данных, любой тип
+        id - порядковый номер текущей конфигурации
+        lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+    check - псодеержит проверку и должно возвращать булевое значение.  Выражение написано на языке javascript. Доступны переменные:
+        inputs - содержит массив входящих данных, любой тип
+        id - порядковый номер текущей конфигурации
+        lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+    error - содержит строку, представляющую собой ошибку, которая отправляется в случае если проверка не пройдена.
+Каждая конфигурация исполняется последовательно. Алгоритм работы:
+    вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
+    ему передаются параметры, указанные в поле params
+    возвращаемые контекстом данные записываются в переменную lst
+    далее вызывается проверка, поле check.
+        если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
+        если положительно, то обрабатывается следующая конфигурация
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[A list of configurations. Each configuration is an object with several fields, some of which are JavaScript expressions.
+Configuration objects have 3 fields:
+    params - Contains the parameters passed to the corresponding context when called. Parameters must be separated by commas. The expression is written in JavaScript. The following variables are available:
+        inputs - Contains an array of input data, any type
+        id - The ordinal number of the current configuration
+        lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
+    check - Contains a check and must return a Boolean value. The expression is written in JavaScript. The following variables are available:
+        inputs - Contains an array of input data, any type
+        id - The ordinal number of the current configuration
+        lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number. error - contains a string representing an error that is sent if the check fails.
+Each configuration is executed sequentially. The algorithm works as follows:
+    the context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
+    it is passed the parameters specified in the params field.
+    the data returned by the context is written to the lst variable.
+    then the check is called (check field).
+        if negative, it is considered an error. In this case, everything is aborted and the string specified in the error field is returned as the error.
+        if positive, the next configuration is processed.
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>resultParams</name>
+            <type>STRING</type>
+            <value><![CDATA[inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2]]></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Содержит данные, возвращаемые после обработки всех конфигураций без ошибок. Представляют собой выражения на языке javascript.
+Данные должны быть разделены запятой.
+Доступны переменные:
+    inputs - содержит массив входящих данных, любой тип
+    lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Contains the data returned after all configurations have been processed without errors. These are JavaScript expressions.
+Data must be comma-separated.
+The following variables are available:
+    inputs - contains an array of input data, any type
+    lst - contains an array of arrays of data returned by the context. All data from the called contexts is written here under the corresponding ordinal number.
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+    </defaultSettings>
+
+    <types>
+        <type t="default" minS="1" maxS="1" minEC="1" maxEC="-1" minC="0" maxC="0">
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Обрабатывает входыщие данные на основе конфигураций (поле configuration).
+Каждая конфигурация исполняется последовательно. Алгоритм работы:
+    вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
+    ему передаются параметры, указанные в поле params
+    возвращаемые контекстом данные записываются в переменную lst
+    далее вызывается проверка, поле check.
+        если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
+        если положительно, то обрабатывается следующая конфигурация
+    после обработки всех конфигураций, если нет ошибок, то возвращаются данные, указанные в настройке resultParams.
+                    ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Processes incoming data based on configurations (the configuration field).
+Each configuration is executed sequentially. The following algorithm works:
+    The context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
+    The parameters specified in the params field are passed to it.
+    The data returned by the context is written to the lst variable.
+    Next, a check is called (the check field).
+        If negative, it is considered an error. In this case, the entire process is aborted and the string specified in the error field is returned as the error.
+        If positive, the next configuration is processed.
+    After all configurations have been processed, if there are no errors, the data specified in the resultParams setting is returned.
+                    ]]></value>
+                </entry>
+            </description>
+            <sources>
+                <source>
+                    <count>1</count>
+                    <elements>
+                        <element t="VALUE_ANY" c="-1" vt="STRING" v="str1"/>
+                    </elements>
+                </source>
+            </sources>
+            <ecs>
+                <ec>
+                    <count>-1</count>
+                    <description>
+                        <entry k="ru" v="Контекст, вызываемый для соответствующей конфигурации. Поэтому количество контекстов должно строго быть равно количеству конфигураций."/>
+                        <entry k="en" v="The context invoked for the corresponding configuration. Therefore, the number of contexts must strictly equal the number of configurations."/>
+                    </description>
+                    <elements>
+                        <element t="VALUE_ANY" c="-1" vt="STRING" v="str1"/>
+                    </elements>
+                    <output>
+                        <element t="VALUE_ANY" c="-1" vt="INTEGER" v="1"/>
+                    </output>
+                </ec>
+            </ecs>
+            <output>
+                <element t="VALUE_ANY" c="-1" vt="INTEGER" v="1"/>
+            </output>
+        </type>
+    </types>
+
+    <useStorage>false</useStorage>
+    <threadSafe>true</threadSafe>
+    <useVariables>false</useVariables>
+    <useManagement>false</useManagement>
+
+    <description>
+        <entry>
+            <key>en</key>
+            <value>A logic module for sequentially executing contexts and checking returned data.</value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value>Модуль логики для последовательного исполнения контекстов и проверки возвращаемых данных.</value>
+        </entry>
+    </description>
+
+    <help>
+        <entry>
+            <key>en</key>
+            <value><![CDATA[A logic module for sequentially executing contexts and checking returned data.
+Suitable for simple logic, such as implementing endpoint algorithms in a backend (rest API endpoints).
+Suitable for applications where the algorithm can be decomposed into a sequence of steps, each of which consists of running a function (context) with parameters and checking the returned result.
+            ]]></value>
+        </entry>
+        <entry>
+            <key>ru</key>
+            <value><![CDATA[Модуль логики для последовательного исполнения контекстов и проверки возвращаемых данных.
+Подходит для не сложной логики, например реализации алгоритмов конечных точек в бакенде (end points rest api).
+Подходит там где алгоритм можно разложить на последовательность шагов, где каждый из них представляет собой: запуск функции (контекста) с параметрами и проверка возвращаемого результа.
+        ]]></value>
+        </entry>
+    </help>
+
+    <examples/>
+
+</properties>
