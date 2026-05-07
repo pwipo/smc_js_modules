@@ -35,26 +35,40 @@ JsFactory = function () {
      * @param {JsFactory} that
      * @return {Object[]}
      */
+    /**
+     * This callback type is called `ElementFormat` and is displayed as a global symbol.
+     *
+     * @callback JsFactory.ElementFormat
+     * @param {Object[]} data
+     * @return {Object[]}
+     */
 
     /**
      * @param configurationTool    {SMCApi.ConfigurationTool}
      */
     this.start = function (configurationTool) {
-        /** @type {{params: string, check: string, error: string}[]} */
+        /** @type {{params: string, check: string, error: string, format: string}[]} */
         let cfgs = SmcUtils.convertFromObjectArray(SmcUtils.getObjectArray(configurationTool.getSetting("configuration")), true);
-        /** @type {{call: ElementCaller, check: ElementCheck, error: string}[]} */
+        /** @type {{call: ElementCaller, check: ElementCheck, error: string, format: ElementFormat}[]} */
         this.configuration = [];
         const that = this;
         cfgs.forEach(o => {
-            that.configuration.push({
+            let f = o.format.trim();
+            let obj = {
                 call: eval("(configurationTool, executionContextTool, inputs, id, lst)=>{\n" +
                     "return SmcUtils.executeAndGetMessages(executionContextTool, id, that.convertToParams([" + o.params.trim() + "]));" +
                     "\n}"),
                 check: eval("(inputs, id, lst)=>{\n" +
                     "return " + o.check.trim() + ";" +
                     "\n}"),
-                error: o.error ? o.error.trim() : "error",
-            });
+                error: o.error.trim() ? o.error.trim() : "ec result check error",
+                format: f && f.length > 0 ?
+                    eval("(out)=>{\n" +
+                        f +
+                        "\n}") :
+                    null
+            };
+            that.configuration.push(obj);
         });
 
         let resultParamsS = SmcUtils.toString(configurationTool.getSetting("resultParams")).trim();
@@ -64,6 +78,21 @@ JsFactory = function () {
                 "return that.convertToParams([" + resultParamsS + "]);" +
                 "\n}") :
             null;
+        let inputFormatS = SmcUtils.toString(configurationTool.getSetting("inputFormat")).trim();
+        this.inputFormat = inputFormatS ?
+            eval("(inputs)=>{\n" +
+                inputFormatS +
+                "\n}") :
+            null;
+        let inputCheckS = SmcUtils.toString(configurationTool.getSetting("inputCheck")).trim();
+        this.inputCheck = inputCheckS ?
+            eval("(inputs)=>{\n" +
+                "return " + inputCheckS + ";" +
+                "\n}") :
+            null;
+        this.inputCheckError = SmcUtils.toString(configurationTool.getSetting("inputCheckError")).trim();
+        if (!this.inputCheckError)
+            this.inputCheckError = "input check error"
     };
 
     /**
@@ -81,17 +110,27 @@ JsFactory = function () {
     this.process = function (configurationTool, executionContextTool) {
         const that = this;
         SmcUtils.processMessagesAll(configurationTool, executionContextTool, (id, messages) => {
-            const inputs = that.convertFromMessages(messages[0]);
+            let inputs = that.convertFromMessages(messages[0]);
             /** @type {Object[][]} */
             const lst = [];
             // lst.push(inputs);
 
             // configurationTool.loggerInfo(that.configuration ? that.configuration.length : 0);
 
+            if (that.inputFormat)
+                inputs = that.inputFormat(inputs);
+            if (that.inputCheck && !that.inputCheck(inputs)) {
+                executionContextTool.addError(that.inputCheckError);
+                return;
+            }
+
             for (let i = 0; i < that.configuration.length; i++) {
                 const o = that.configuration[i];
-                const result = o.call(configurationTool, executionContextTool, inputs, i, lst);
-                lst.push(that.convertFromMessages(result));
+                let result = o.call(configurationTool, executionContextTool, inputs, i, lst);
+                result = that.convertFromMessages(result);
+                if (o.format)
+                    result = o.format(result);
+                lst.push(result);
                 if (!o.check(inputs, i, lst)) {
                     executionContextTool.addError(o.error);
                     executionContextTool.addError(i + 1);
@@ -114,6 +153,9 @@ JsFactory = function () {
     this.stop = function (configurationTool) {
         this.configuration = null;
         this.resultParams = null;
+        this.inputFormat = null;
+        this.inputCheck = null;
+        this.inputCheckError = null;
     };
 
     /**

@@ -3,7 +3,7 @@
 
     <uuid>LogicCheck</uuid>
     <provider>js</provider>
-    <ver>1.0.0</ver>
+    <ver>1.1.0</ver>
     <apiVer>1.4.3</apiVer>
     <author>Nikolay V. Ulyanov</author>
     <contacts>ulianownv@mail.ru</contacts>
@@ -43,19 +43,28 @@ responsible.
                 <entry>
                     <key>ru</key>
                     <value><![CDATA[Список конфигураций. Каждая конфигурация представляет собой объект с несколькими полями, часть из которых представляют собой выражения на языке javascript.
-Объекты конфигураций имеют 3 поля:
-    params - содержит параметры, передаваемые соответствющему контексту при вызове. Параметры должны быть разделены запятой. Выражение написано на языке javascript. Доступны переменные:
-        inputs - содержит массив входящих данных, любой тип
-        id - порядковый номер текущей конфигурации
-        lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
-    check - псодеержит проверку и должно возвращать булевое значение.  Выражение написано на языке javascript. Доступны переменные:
-        inputs - содержит массив входящих данных, любой тип
-        id - порядковый номер текущей конфигурации
-        lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+Объекты конфигураций имеют 4 поля:
+    params - содержит параметры, передаваемые соответствющему контексту при вызове. Параметры должны быть разделены запятой. Выражение написано на языке javascript.
+        Доступны переменные:
+            inputs - содержит массив входящих данных, любой тип
+            id - порядковый номер текущей конфигурации
+            lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+        Пример: inputs ? inputs[0] : 1, inputs && inputs.length>1 ? inputs[1] : 2
+    check - содержит проверку и должно возвращать булевое значение.  Выражение написано на языке javascript.
+        Доступны переменные:
+            inputs - содержит массив входящих данных, любой тип
+            id - порядковый номер текущей конфигурации
+            lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+        Пример: lst[0] && lst[0][0]===3
     error - содержит строку, представляющую собой ошибку, которая отправляется в случае если проверка не пройдена.
+    format - содержит код (тело функции) форматирования входных данных на языке javascript. Опционально. Должен возвращать массив значений - который заменит входящий массив.
+        Доступны переменные:
+            out - содержит массив возвращаемых контекстом данных.
+        Пример: return [...inputs, 3];
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
     вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
     ему передаются параметры, указанные в поле params
+    если есть format, то возвращаемые контекстом данные форматируются
     возвращаемые контекстом данные записываются в переменную lst
     далее вызывается проверка, поле check.
         если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
@@ -65,18 +74,28 @@ responsible.
                 <entry>
                     <key>en</key>
                     <value><![CDATA[A list of configurations. Each configuration is an object with several fields, some of which are JavaScript expressions.
-Configuration objects have 3 fields:
-    params - Contains the parameters passed to the corresponding context when called. Parameters must be separated by commas. The expression is written in JavaScript. The following variables are available:
-        inputs - Contains an array of input data, any type
-        id - The ordinal number of the current configuration
-        lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
-    check - Contains a check and must return a Boolean value. The expression is written in JavaScript. The following variables are available:
-        inputs - Contains an array of input data, any type
-        id - The ordinal number of the current configuration
-        lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number. error - contains a string representing an error that is sent if the check fails.
+Configuration objects have 4 fields:
+    params - Contains the parameters passed to the corresponding context when called. Parameters must be separated by commas. The expression is written in JavaScript.
+        The following variables are available:
+            inputs - Contains an array of input data, any type
+            id - The ordinal number of the current configuration
+            lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
+        Example: inputs ? inputs[0] : 1, inputs && inputs.length>1 ? inputs[1] : 2
+    check - Contains a check and must return a Boolean value. The expression is written in JavaScript.
+        The following variables are available:
+            inputs - Contains an array of input data, any type
+            id - The ordinal number of the current configuration
+            lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
+        Example: lst[0] && lst[0][0]===3
+    error - contains a string representing an error that is sent if the check fails.
+    format - contains the JavaScript code (function body) for formatting input data. Optional. Must return an array of values ​​that will replace the input array.
+        Available variables:
+            out - contains an array of data returned by the context.
+        Example: return [...inputs, 3];
 Each configuration is executed sequentially. The algorithm works as follows:
     the context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
     it is passed the parameters specified in the params field.
+    if format is present, the data returned by the context is formatted.
     the data returned by the context is written to the lst variable.
     then the check is called (check field).
         if negative, it is considered an error. In this case, everything is aborted and the string specified in the error field is returned as the error.
@@ -111,6 +130,70 @@ The following variables are available:
                 </entry>
             </description>
         </value>
+        <value>
+            <name>inputFormat</name>
+            <type>STRING</type>
+            <value></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Содержит код (тело функции) форматирования входных данных на языке javascript.
+Может быть пустым. Полезен для комплексной подготовки входящих параметров для последующего использования в проверках и вызовах.
+Должен возвращать массив значений - который заменит входящий массив.
+Доступны переменные:
+    inputs - содержит массив входящих данных, любой тип
+Пример: return [...inputs, 3];
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Contains the JavaScript code (function body) for formatting input data.
+May be empty. Useful for complex preparation of input parameters for subsequent use in checks and calls.
+Must return an array of values, which will replace the input array.
+Available variables:
+    inputs - contains an array of input data, any type.
+Example: return [...inputs, 3];
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>inputCheck</name>
+            <type>STRING</type>
+            <value></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Содержит проверку и должно возвращать булевое значение. Выражение написано на языке javascript.
+Может быть пустым.
+Доступны переменные:
+    inputs - содержит массив входящих данных, любой тип
+Пример: inputs[0]==="path"
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Contains a check and must return a Boolean value. The expression is written in JavaScript.
+May be empty.
+Available variables:
+    inputs - contains an array of input data, any type
+Example: inputs[0]==="path"
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>inputCheckError</name>
+            <type>STRING</type>
+            <value>Input check error</value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry k="ru" v="Содержит строку, представляющую собой ошибку, которая отправляется в случае если проверка не пройдена."/>
+                <entry k="en" v="Contains a string representing the error that is sent if the check fails."/>
+           </description>
+        </value>
     </defaultSettings>
 
     <types>
@@ -122,6 +205,7 @@ The following variables are available:
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
     вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
     ему передаются параметры, указанные в поле params
+    если есть format, то возвращаемые контекстом данные форматируются
     возвращаемые контекстом данные записываются в переменную lst
     далее вызывается проверка, поле check.
         если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
@@ -135,6 +219,7 @@ The following variables are available:
 Each configuration is executed sequentially. The following algorithm works:
     The context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
     The parameters specified in the params field are passed to it.
+    If format is present, the data returned by the context is formatted.
     The data returned by the context is written to the lst variable.
     Next, a check is called (the check field).
         If negative, it is considered an error. In this case, the entire process is aborted and the string specified in the error field is returned as the error.
