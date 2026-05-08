@@ -61,6 +61,7 @@ responsible.
         Доступны переменные:
             out - содержит массив возвращаемых контекстом данных.
         Пример: return [...inputs, 3];
+    disableAutoConvert - если true, то не конвертирует возвращаемые вызываемыми контекстами данные.
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
     вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
     ему передаются параметры, указанные в поле params
@@ -92,6 +93,7 @@ Configuration objects have 4 fields:
         Available variables:
             out - contains an array of data returned by the context.
         Example: return [...inputs, 3];
+    disableAutoConvert - if true, does not convert the data returned by the calling contexts.
 Each configuration is executed sequentially. The algorithm works as follows:
     the context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
     it is passed the parameters specified in the params field.
@@ -107,7 +109,7 @@ Each configuration is executed sequentially. The algorithm works as follows:
         <value>
             <name>resultParams</name>
             <type>STRING</type>
-            <value><![CDATA[inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2]]></value>
+            <value><![CDATA[lst[0]]]></value>
             <subtype>TEXT</subtype>
             <description>
                 <entry>
@@ -117,6 +119,7 @@ Each configuration is executed sequentially. The algorithm works as follows:
 Доступны переменные:
     inputs - содержит массив входящих данных, любой тип
     lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+Пример: inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2
                 ]]></value>
                 </entry>
                 <entry>
@@ -126,6 +129,7 @@ Data must be comma-separated.
 The following variables are available:
     inputs - contains an array of input data, any type
     lst - contains an array of arrays of data returned by the context. All data from the called contexts is written here under the corresponding ordinal number.
+Example: inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2
                 ]]></value>
                 </entry>
             </description>
@@ -197,33 +201,39 @@ Example: inputs[0]==="path"
     </defaultSettings>
 
     <types>
-        <type t="default" minS="1" maxS="1" minEC="1" maxEC="-1" minC="0" maxC="0">
+        <type t="default" minS="1" maxS="1" minEC="0" maxEC="-1" minC="0" maxC="0">
             <description>
                 <entry>
                     <key>ru</key>
                     <value><![CDATA[Обрабатывает входыщие данные на основе конфигураций (поле configuration).
-Каждая конфигурация исполняется последовательно. Алгоритм работы:
-    вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
-    ему передаются параметры, указанные в поле params
-    если есть format, то возвращаемые контекстом данные форматируются
-    возвращаемые контекстом данные записываются в переменную lst
-    далее вызывается проверка, поле check.
-        если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
-        если положительно, то обрабатывается следующая конфигурация
-    после обработки всех конфигураций, если нет ошибок, то возвращаются данные, указанные в настройке resultParams.
+Алгоритм работы:
+    Ели настройка inputFormat не пуста, то производится форматирования входящих данных.
+    Если настройка inputCheck не пуста, то производится проверка входящих данных.
+    Далее последовательно выполняются конфигурации, заданные настройкой configuration:
+        Вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
+        Ему передаются параметры, указанные в поле params
+        Если есть format, то возвращаемые контекстом данные форматируются
+        Возвращаемые контекстом данные записываются в переменную lst
+        Далее вызывается проверка, поле check:
+            Если отрицательно, то считается ошибкой. в этом случаее всё прерывается и возвращается строка, указанная в поле error в качестве ошибки.
+            Если положительно, то обрабатывается следующая конфигурация
+    После обработки всех конфигураций, если нет ошибок, то возвращаются данные, указанные в настройке resultParams.
                     ]]></value>
                 </entry>
                 <entry>
                     <key>en</key>
                     <value><![CDATA[Processes incoming data based on configurations (the configuration field).
-Each configuration is executed sequentially. The following algorithm works:
-    The context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
-    The parameters specified in the params field are passed to it.
-    If format is present, the data returned by the context is formatted.
-    The data returned by the context is written to the lst variable.
-    Next, a check is called (the check field).
-        If negative, it is considered an error. In this case, the entire process is aborted and the string specified in the error field is returned as the error.
-        If positive, the next configuration is processed.
+Operation algorithm:
+    If the inputFormat setting is not empty, the incoming data is formatted.
+    If the inputCheck setting is not empty, the incoming data is checked.
+    Next, the configurations specified by the configuration setting are executed sequentially:
+        The context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
+        The parameters specified in the params field are passed to it.
+        If format is present, the data returned by the context is formatted.
+        The data returned by the context is written to the lst variable.
+        Next, the check is called (check field):
+            If negative, it is considered an error. In this case, the entire process is aborted and the string specified in the error field is returned as the error.
+            If positive, the next configuration is processed.
     After all configurations have been processed, if there are no errors, the data specified in the resultParams setting is returned.
                     ]]></value>
                 </entry>
