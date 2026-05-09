@@ -40,16 +40,15 @@ JsFactory = function () {
      *
      * @callback JsFactory.ElementFormat
      * @param {Object[]} data
-     * @return {Object[]}
      */
 
     /**
      * @param configurationTool    {SMCApi.ConfigurationTool}
      */
     this.start = function (configurationTool) {
-        /** @type {{params: string, check: string, error: string, format: string, disableAutoConvert: boolean}[]} */
+        /** @type {{params: string, check: string, error: string, format: string, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean}[]} */
         let cfgs = SmcUtils.convertFromObjectArray(SmcUtils.getObjectArray(configurationTool.getSetting("configuration")), true);
-        /** @type {{call: ElementCaller, check: ElementCheck, error: string, format: ElementFormat, disableAutoConvert: boolean}[]} */
+        /** @type {{call: ElementCaller, check: ElementCheck, error: string, format: ElementFormat, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean}[]} */
         this.configuration = [];
         const that = this;
         cfgs.forEach(o => {
@@ -57,11 +56,15 @@ JsFactory = function () {
             let c = o.check ? o.check.trim() : null;
             let e = o.error ? o.error.trim() : null;
             let f = o.format ? o.format.trim() : null;
+            let skipECExec = o.skipECExec ? o.skipECExec : false;
+
             let obj = {
-                call: eval("(configurationTool, executionContextTool, inputs, id, lst)=>{\n" +
-                    "return SmcUtils.executeAndGetMessages(executionContextTool, id, " +
-                    (p ? "that.convertToParams([" + p.trim() + "])" : "[]") +
-                    ");" + "\n}"),
+                call: !skipECExec ?
+                    eval("(configurationTool, executionContextTool, inputs, id, lst)=>{\n" +
+                        "return SmcUtils.executeAndGetMessages(executionContextTool, id, " +
+                        (p ? "that.convertToParams([" + p.trim() + "])" : "[]") +
+                        ");" + "\n}") :
+                    null,
                 check: c ?
                     eval("(inputs, id, lst)=>{\n" +
                         "return " + c.trim() + ";" +
@@ -73,7 +76,9 @@ JsFactory = function () {
                         f +
                         "\n}") :
                     null,
-                disableAutoConvert: o.disableAutoConvert ? o.disableAutoConvert : false
+                disableAutoConvert: o.disableAutoConvert ? o.disableAutoConvert : false,
+                needCheckExist: o.needCheckExist ? o.needCheckExist : false,
+                skipECExec: skipECExec
             };
             that.configuration.push(obj);
         });
@@ -117,7 +122,7 @@ JsFactory = function () {
     this.process = function (configurationTool, executionContextTool) {
         const that = this;
         SmcUtils.processMessagesAll(configurationTool, executionContextTool, (id, messages) => {
-            let inputs = that.convertFromMessages(messages[0]);
+            let inputs = that.convertFromMessages(messages[0], true);
             /** @type {Object[][]} */
             const lst = [];
             // lst.push(inputs);
@@ -125,19 +130,28 @@ JsFactory = function () {
             // configurationTool.loggerInfo(that.configuration ? that.configuration.length : 0);
 
             if (that.inputFormat)
-                inputs = that.inputFormat(inputs);
+                that.inputFormat(inputs);
             if (that.inputCheck && !that.inputCheck(inputs)) {
                 executionContextTool.addError(that.inputCheckError);
                 return;
             }
 
+            let ecId = -1;
             for (let i = 0; i < that.configuration.length; i++) {
                 const o = that.configuration[i];
-                let result = o.call(configurationTool, executionContextTool, inputs, i, lst);
-                result = o.disableAutoConvert ? result : that.convertFromMessages(result);
-                if (o.format)
-                    result = o.format(result);
-                lst.push(result);
+                if (!o.skipECExec) {
+                    ecId++;
+                    let result = o.call(configurationTool, executionContextTool, inputs, ecId, lst);
+                    result = o.disableAutoConvert ? result : that.convertFromMessages(result, false);
+                    if (o.needCheckExist && (!result || result.length === 0)) {
+                        executionContextTool.addError(o.error);
+                        executionContextTool.addError(i + 1);
+                        return;
+                    }
+                    if (o.format)
+                        o.format(result);
+                    lst.push(result);
+                }
                 if (!o.check(inputs, i, lst)) {
                     executionContextTool.addError(o.error);
                     executionContextTool.addError(i + 1);
@@ -171,6 +185,9 @@ JsFactory = function () {
      */
     this.convertToParams = function (params) {
         const result = [];
+        new SMCApi.ObjectArray(SMCApi.ObjectType.OBJECT_ELEMENT, [new SMCApi.ObjectElement([
+            new SMCApi.ObjectField("", "")
+        ])]);
         if (params) {
             if (!Array.isArray(params))
                 params = [params];
@@ -196,9 +213,10 @@ JsFactory = function () {
 
     /**
      * @param params    {SMCApi.IMessage[]}
+     * @param convertSingleObjectArrauToObject    {boolean}
      * @return {Object[]}
      */
-    this.convertFromMessages = function (params) {
+    this.convertFromMessages = function (params, convertSingleObjectArrauToObject) {
         const result = [];
         if (params) {
             if (!Array.isArray(params))
@@ -207,6 +225,8 @@ JsFactory = function () {
                 let v;
                 if (SmcUtils.isObjectArray(m)) {
                     v = SmcUtils.convertFromObjectArray(m, true);
+                    if (convertSingleObjectArrauToObject && v.length === 1 && SmcUtils.isArrayContainObjectElements(m))
+                        v = v[0];
                 } else {
                     v = m.getValue();
                 }

@@ -46,22 +46,24 @@ responsible.
 Объекты конфигураций имеют 4 поля:
     params - содержит параметры, передаваемые соответствющему контексту при вызове. Параметры должны быть разделены запятой. Выражение написано на языке javascript.
         Доступны переменные:
-            inputs - содержит массив входящих данных, любой тип
+            inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
             id - порядковый номер текущей конфигурации
             lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
         Пример: inputs ? inputs[0] : 1, inputs && inputs.length>1 ? inputs[1] : 2
     check - содержит проверку и должно возвращать булевое значение.  Выражение написано на языке javascript.
         Доступны переменные:
-            inputs - содержит массив входящих данных, любой тип
+            inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
             id - порядковый номер текущей конфигурации
             lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
         Пример: lst[0] && lst[0][0]===3
     error - содержит строку, представляющую собой ошибку, которая отправляется в случае если проверка не пройдена.
-    format - содержит код (тело функции) форматирования входных данных на языке javascript. Опционально. Должен возвращать массив значений - который заменит входящий массив.
+    format - содержит код (тело функции) форматирования входных данных на языке javascript. Опционально.
         Доступны переменные:
             out - содержит массив возвращаемых контекстом данных.
-        Пример: return [...inputs, 3];
+        Пример: out.splice(1, inputs.length); out.push(3);
     disableAutoConvert - если true, то не конвертирует возвращаемые вызываемыми контекстами данные.
+    needCheckExist - если true, то проверяет чтобы контекст возвращал данные.
+    skipECExec - если true, то эта конфигурация не вызывает контекст исполнения и номер контекста не сдвигается (т.е. следующая конфигурация, например под номером 3 будет вызывать второй контекст).
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
     вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
     ему передаются параметры, указанные в поле params
@@ -78,22 +80,24 @@ responsible.
 Configuration objects have 4 fields:
     params - Contains the parameters passed to the corresponding context when called. Parameters must be separated by commas. The expression is written in JavaScript.
         The following variables are available:
-            inputs - Contains an array of input data, any type
+            inputs - Contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
             id - The ordinal number of the current configuration
             lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
         Example: inputs ? inputs[0] : 1, inputs && inputs.length>1 ? inputs[1] : 2
     check - Contains a check and must return a Boolean value. The expression is written in JavaScript.
         The following variables are available:
-            inputs - Contains an array of input data, any type
+            inputs - Contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
             id - The ordinal number of the current configuration
             lst - Contains an array of arrays of data returned by the context. All data from called contexts is written here under the corresponding ordinal number.
         Example: lst[0] && lst[0][0]===3
     error - contains a string representing an error that is sent if the check fails.
-    format - contains the JavaScript code (function body) for formatting input data. Optional. Must return an array of values ​​that will replace the input array.
+    format - contains the JavaScript code (function body) for formatting input data. Optional.
         Available variables:
             out - contains an array of data returned by the context.
-        Example: return [...inputs, 3];
+        Example: out.splice(1, inputs.length); out.push(3);
     disableAutoConvert - if true, does not convert the data returned by the calling contexts.
+    needCheckExist - if true, checks that the context returns data.
+    skipECExec - if true, this configuration does not invoke the execution context and the context number is not shifted (i.e., the next configuration, for example, number 3, will invoke the second context).
 Each configuration is executed sequentially. The algorithm works as follows:
     the context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
     it is passed the parameters specified in the params field.
@@ -117,7 +121,7 @@ Each configuration is executed sequentially. The algorithm works as follows:
                     <value><![CDATA[Содержит данные, возвращаемые после обработки всех конфигураций без ошибок. Представляют собой выражения на языке javascript.
 Данные должны быть разделены запятой.
 Доступны переменные:
-    inputs - содержит массив входящих данных, любой тип
+    inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
     lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
 Пример: inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2
                 ]]></value>
@@ -127,7 +131,7 @@ Each configuration is executed sequentially. The algorithm works as follows:
                     <value><![CDATA[Contains the data returned after all configurations have been processed without errors. These are JavaScript expressions.
 Data must be comma-separated.
 The following variables are available:
-    inputs - contains an array of input data, any type
+    inputs - contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
     lst - contains an array of arrays of data returned by the context. All data from the called contexts is written here under the corresponding ordinal number.
 Example: inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2
                 ]]></value>
@@ -144,20 +148,18 @@ Example: inputs ? inputs[0] : 1, lst && lst.length > 0 && lst[0] ? lst[0][0] : 2
                     <key>ru</key>
                     <value><![CDATA[Содержит код (тело функции) форматирования входных данных на языке javascript.
 Может быть пустым. Полезен для комплексной подготовки входящих параметров для последующего использования в проверках и вызовах.
-Должен возвращать массив значений - который заменит входящий массив.
 Доступны переменные:
-    inputs - содержит массив входящих данных, любой тип
-Пример: return [...inputs, 3];
+    inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
+Пример: inputs.splice(1, inputs.length); inputs.push(3);
                 ]]></value>
                 </entry>
                 <entry>
                     <key>en</key>
                     <value><![CDATA[Contains the JavaScript code (function body) for formatting input data.
 May be empty. Useful for complex preparation of input parameters for subsequent use in checks and calls.
-Must return an array of values, which will replace the input array.
 Available variables:
-    inputs - contains an array of input data, any type.
-Example: return [...inputs, 3];
+    inputs - contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
+Example: inputs.splice(1, inputs.length); inputs.push(3);
                 ]]></value>
                 </entry>
             </description>
@@ -173,7 +175,7 @@ Example: return [...inputs, 3];
                     <value><![CDATA[Содержит проверку и должно возвращать булевое значение. Выражение написано на языке javascript.
 Может быть пустым.
 Доступны переменные:
-    inputs - содержит массив входящих данных, любой тип
+    inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
 Пример: inputs[0]==="path"
                 ]]></value>
                 </entry>
@@ -182,7 +184,7 @@ Example: return [...inputs, 3];
                     <value><![CDATA[Contains a check and must return a Boolean value. The expression is written in JavaScript.
 May be empty.
 Available variables:
-    inputs - contains an array of input data, any type
+    inputs - contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
 Example: inputs[0]==="path"
                 ]]></value>
                 </entry>
