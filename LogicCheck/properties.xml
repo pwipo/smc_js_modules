@@ -61,7 +61,7 @@ responsible.
         Доступны переменные:
             out - содержит массив возвращаемых контекстом данных.
         Пример: out.splice(1, inputs.length); out.push(3);
-    disableAutoConvert - если true, то не конвертирует возвращаемые вызываемыми контекстами данные.
+    disableAutoConvert - если true, то не конвертирует возвращаемые вызываемыми контекстами данные типа ObjectArray в объекты.
     needCheckExist - если true, то проверяет чтобы контекст возвращал данные.
     skipECExec - если true, то эта конфигурация не вызывает контекст исполнения и номер контекста не сдвигается (т.е. следующая конфигурация, например под номером 3 будет вызывать второй контекст).
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
@@ -95,7 +95,7 @@ Configuration objects have 4 fields:
         Available variables:
             out - contains an array of data returned by the context.
         Example: out.splice(1, inputs.length); out.push(3);
-    disableAutoConvert - if true, does not convert the data returned by the calling contexts.
+    disableAutoConvert - If true, does not convert ObjectArray data returned by calling contexts into objects.
     needCheckExist - if true, checks that the context returns data.
     skipECExec - if true, this configuration does not invoke the execution context and the context number is not shifted (i.e., the next configuration, for example, number 3, will invoke the second context).
 Each configuration is executed sequentially. The algorithm works as follows:

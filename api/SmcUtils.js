@@ -3,7 +3,13 @@
  * http://www.smcsystem.ru
  */
 
+Java = typeof Java !== 'undefined' ? Java : null;
+
 SmcUtils = {
+    typeNumber: Java && Java.type ? Java.type("java.lang.Number") : Number,
+    typeString: Java && Java.type ? Java.type("java.lang.String") : String,
+    typeBoolean: Java && Java.type ? Java.type("java.lang.Boolean") : Boolean,
+    typeBytes: Java && Java.type ? Java.type('byte[]') : Array,
 
     /**
      *
@@ -743,12 +749,12 @@ SmcUtils = {
         } else if (Number.isInteger(value)) {
             return SMCApi.ValueType.DOUBLE;
          */
-        if (value instanceof Number || typeof (value) === "number") {
+        if (value instanceof Number || typeof (value) === "number" || value instanceof this.typeNumber) {
             const intValue = Math.round(value);
             return value === intValue ? SMCApi.ValueType.LONG : SMCApi.ValueType.DOUBLE;
-        } else if (Object.prototype.toString.call(value) === "[object String]") {
+        } else if (Object.prototype.toString.call(value) === "[object String]" || value instanceof this.typeString) {
             return SMCApi.ValueType.STRING;
-        } else if (Array.isArray(value)) {
+        } else if (Array.isArray(value) || value instanceof this.typeBytes) {
             return SMCApi.ValueType.BYTES;
         } else if (value === false || value === true) {
             return SMCApi.ValueType.BOOLEAN;
@@ -1375,7 +1381,7 @@ SmcUtils = {
      */
     convertToObjectArray: function (arr, silent) {
         const result = new SMCApi.ObjectArray();
-        if (arr == null || arr.length === 0)
+        if (arr == null || !Array.isArray(arr) || arr.length === 0 || !arr.forEach)
             return result;
         try {
             const type = SmcUtils.convertTo(SmcUtils.getValueTypeObject(arr[0]));
@@ -1416,6 +1422,11 @@ SmcUtils = {
                             type = SMCApi.ObjectType.OBJECT_ELEMENT;
                         }
                     }
+                    if (type == null) {
+                        type = SMCApi.ObjectType.STRING;
+                        if (value != null)
+                            value = null;
+                    }
                     result.getFields().push(new SMCApi.ObjectField(prop, value, type));
                 }
             }
@@ -1426,4 +1437,4 @@ SmcUtils = {
         return result;
     }
 
-}
+};
