@@ -121,7 +121,7 @@ JsFactory = function () {
     this.process = function (configurationTool, executionContextTool) {
         const that = this;
         SmcUtils.processMessagesAll(configurationTool, executionContextTool, (id, messages) => {
-            let inputs = that.convertFromMessages(messages[0], true, false);
+            let inputs = that.convertFromMessages(configurationTool, messages[0], true, false);
             /** @type {Object[][]} */
             const lst = [];
             // lst.push(inputs);
@@ -143,9 +143,9 @@ JsFactory = function () {
                     let resultParams = o.params(inputs, ecId, lst);
                     if (resultParams)
                         resultParams = that.convertToParams(configurationTool, resultParams);
-                    // configurationTool.loggerTrace(resultParams);
-                    result = SmcUtils.executeAndGetMessages(executionContextTool, ecId, resultParams);
-                    result = that.convertFromMessages(result, false, o.disableAutoConvert);
+                    // configurationTool.loggerTrace("ec params: " + resultParams);
+                    let result = SmcUtils.executeAndGetMessages(executionContextTool, ecId, resultParams);
+                    result = that.convertFromMessages(configurationTool, result, false, o.disableAutoConvert);
                     if (o.needCheckExist && (!result || result.length === 0)) {
                         executionContextTool.addError(o.error);
                         executionContextTool.addError(i + 1);
@@ -198,10 +198,11 @@ JsFactory = function () {
             params.forEach(v => {
                 let resultV = v;
                 const t = SmcUtils.getValueTypeObject(resultV);
-                if ((t != null && t !== SMCApi.ValueType.BYTES) || (t === null)) {
+                // configurationTool.loggerTrace("convertToParams " + String(t) + " " + typeof (resultV) + " " + resultV);
+                if (t != null && t !== SMCApi.ValueType.BYTES) {
                     // configurationTool.loggerTrace("convertToParams skip " + String(t) + " " + resultV);
                 } else if (resultV) {
-                    if (t !== SMCApi.ValueType.BYTES || resultV.length === 0) {
+                    if (t === null) {
                         // configurationTool.loggerTrace("convertToParams 1 " + typeof (resultV) + " " + String(resultV));
                         let newV = SmcUtils.convertToObjectElement(resultV, true);
                         if (newV)
@@ -212,9 +213,9 @@ JsFactory = function () {
                     } else {
                         // const t2 = SmcUtils.getValueTypeObject(resultV[0]);
                         // const t2O = typeof (resultV[0]);
+                        // configurationTool.loggerTrace("convertToParams 3 1 " + t2 + " " + t2O + " " + resultV.length + " " + resultV[0]);
                         let newV = SmcUtils.convertToObjectArray(resultV, true);
                         // if (newV.size() <= 1 /*|| !newV.getType()|| newV.getType() === undefined || newV.getType() === null || newV.getType() !== SMCApi.ObjectType.OBJECT_ELEMENT*/)
-                        // configurationTool.loggerTrace("convertToParams 3 1 " + t2 + " " + t2O + " " + resultV.length + " " + resultV[0]);
                         // let newV = SmcUtils.convertToObjectArray(resultV[0], true);
                         /*
                                                 configurationTool.loggerTrace("convertToParams 3 2 " + t2 + " " + t2O + " " + resultV.length + " " + resultV[0] + " " +
@@ -226,8 +227,8 @@ JsFactory = function () {
                                                 configurationTool.loggerTrace("convertToParams 3 1 " + newV);
                         */
                         // if (newV.size && newV.size() > 0 /*&& newV.getType()&& newV.getType() !== undefined && newV.getType() !== null && newV.getType() == SMCApi.ObjectType.OBJECT_ELEMENT*/)
-                        if (newV.size() > 0)
-                            resultV = newV;
+                        // if (newV.size() > 0)
+                        resultV = newV;
                     }
                 }
                 result.push(resultV);
@@ -237,21 +238,22 @@ JsFactory = function () {
     };
 
     /**
+     * @param configurationTool    {SMCApi.ConfigurationTool}
      * @param params    {SMCApi.IMessage[]}
      * @param convertSingleObjectArrauToObject    {boolean}
      * @param disableAutoConvert    {boolean}
      * @return {Object[]}
      */
-    this.convertFromMessages = function (params, convertSingleObjectArrauToObject, disableAutoConvert) {
+    this.convertFromMessages = function (configurationTool, params, convertSingleObjectArrauToObject, disableAutoConvert) {
         const result = [];
         if (params) {
             // if (!Array.isArray(params))
             //     params = [params];
             params.forEach(m => {
                 let v = m.getValue();
+                // configurationTool.loggerTrace("convertFromMessages " + String(v) + " " + typeof (v) + " " + m.getType());
                 if (!disableAutoConvert && SmcUtils.isObjectArray(m)) {
                     const objectArray = SmcUtils.getObjectArray(m);
-                    v = SmcUtils.convertFromObjectArray(objectArray, true);
                     v = SmcUtils.convertFromObjectArray(objectArray, true);
                     if (convertSingleObjectArrauToObject && v.length === 1 && SmcUtils.isArrayContainObjectElements(objectArray))
                         v = v[0];
