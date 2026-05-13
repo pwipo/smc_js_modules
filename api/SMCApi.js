@@ -300,11 +300,13 @@ SMCApi.ObjectField = function (name, value, type) {
                     // } else if (Number.isInteger(value)) {
                     //     valueType = SMCApi.ObjectType.LONG;
                 } else if (value instanceof Number || typeof (value) === "number") {
-                    const intValue = Math.round(value);
-                    valueType = value === intValue ? SMCApi.ValueType.LONG : SMCApi.ValueType.DOUBLE;
+                    // const intValue = Math.round(value);
+                    const intValue1 = Math.ceil(value);
+                    const intValue2 = Math.floor(value);
+                    valueType = intValue1 === intValue2 ? SMCApi.ValueType.LONG : SMCApi.ValueType.DOUBLE;
                 } else {
                     valueType = SMCApi.ObjectType.DOUBLE;
-                    this.value = value.doubleValue ? value.doubleValue() : 0;
+                    this.value = value.doubleValue ? value.doubleValue() : 0.;
                 }
             }
             if (valueType == null)
@@ -455,13 +457,17 @@ SMCApi.ObjectArray = function (typev, objects) {
             if (!Array.isArray(value))
                 throw new SMCApi.ModuleException('wrong obj type');
         } else if (this.type === SMCApi.ObjectType.BYTE || this.type === SMCApi.ObjectType.SHORT || this.type === SMCApi.ObjectType.INTEGER || this.type === SMCApi.ObjectType.LONG) {
-            const intValue = Math.round(value);
-            if (value !== intValue)
+            // const intValue = Math.round(value);
+            const intValue1 = Math.ceil(value);
+            const intValue2 = Math.floor(value);
+            if (intValue1 !== intValue2)
                 throw new SMCApi.ModuleException('wrong obj type');
         } else if (this.type === SMCApi.ObjectType.FLOAT || this.type === SMCApi.ObjectType.DOUBLE) {
             const intValue = Math.round(value);
-            if (value === intValue)
-                throw new SMCApi.ModuleException('wrong obj type');
+            // const intValue1 = Math.ceil(value);
+            // const intValue2 = Math.floor(value);
+            // if (intValue1 === intValue2)
+            //     throw new SMCApi.ModuleException('wrong obj type');
         } else if (this.type === SMCApi.ObjectType.BOOLEAN) {
             if (value !== false && value !== true)
                 throw new SMCApi.ModuleException('wrong obj type');

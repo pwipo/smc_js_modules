@@ -254,9 +254,10 @@ JsFactory = function () {
                 // configurationTool.loggerTrace("convertFromMessages " + String(v) + " " + typeof (v) + " " + m.getType());
                 if (!disableAutoConvert && SmcUtils.isObjectArray(m)) {
                     const objectArray = SmcUtils.getObjectArray(m);
-                    v = SmcUtils.convertFromObjectArray(objectArray, true);
+                    v = SmcUtils.convertFromObjectArray(objectArray, false);
                     if (convertSingleObjectArrauToObject && v.length === 1 && SmcUtils.isArrayContainObjectElements(objectArray))
                         v = v[0];
+                    // configurationTool.loggerTrace("convertFromMessages " + String(v) + " " + typeof (v) + " " + SmcUtils.getValueTypeObject(v));
                 }
                 result.push(v);
             });

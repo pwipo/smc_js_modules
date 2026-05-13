@@ -1051,7 +1051,7 @@ SmcUtils = {
      */
     executeAndGet: function (executionContextTool, id, params) {
         executionContextTool.getFlowControlTool().executeNow(SMCApi.CommandType.EXECUTE, id, params);
-        return executionContextTool.getFlowControlTool().getMessagesFromExecuted(id);
+        return executionContextTool.getFlowControlTool().getMessagesFromExecuted(0, id);
     },
 
     /**
@@ -1322,7 +1322,9 @@ SmcUtils = {
             return result;
         try {
             if (objectArray.isSimple()) {
-                result = SmcUtils.toList(objectArray);
+                result = [];
+                for (let i = 0; i < objectArray.size(); i++)
+                    result.push(objectArray.get(i));
             } else if (SmcUtils.isArrayContainArrays(objectArray)) {
                 for (let i = 0; i < objectArray.size(); i++) {
                     /** @type {SMCApi.ObjectArray} */
@@ -1335,7 +1337,6 @@ SmcUtils = {
                     .map(o => SmcUtils.convertFromObjectElement(o, silent))
                     .filter(o => o != null);
             }
-
         } catch (e) {
             if (!silent)
                 throw e
