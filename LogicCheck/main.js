@@ -214,7 +214,7 @@ JsFactory = function () {
                         // const t2 = SmcUtils.getValueTypeObject(resultV[0]);
                         // const t2O = typeof (resultV[0]);
                         // configurationTool.loggerTrace("convertToParams 3 1 " + t2 + " " + t2O + " " + resultV.length + " " + resultV[0]);
-                        let newV = SmcUtils.convertToObjectArray(resultV, true);
+                        // let newV = SmcUtils.convertToObjectArray(resultV, true);
                         // if (newV.size() <= 1 /*|| !newV.getType()|| newV.getType() === undefined || newV.getType() === null || newV.getType() !== SMCApi.ObjectType.OBJECT_ELEMENT*/)
                         // let newV = SmcUtils.convertToObjectArray(resultV[0], true);
                         /*
@@ -228,7 +228,9 @@ JsFactory = function () {
                         */
                         // if (newV.size && newV.size() > 0 /*&& newV.getType()&& newV.getType() !== undefined && newV.getType() !== null && newV.getType() == SMCApi.ObjectType.OBJECT_ELEMENT*/)
                         // if (newV.size() > 0)
-                        resultV = newV;
+                        let newV = SmcUtils.convertToObjectArray(resultV, true);
+                        if (newV.size() === resultV.length)
+                            resultV = newV;
                     }
                 }
                 result.push(resultV);

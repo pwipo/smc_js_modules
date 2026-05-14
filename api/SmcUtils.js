@@ -749,12 +749,12 @@ SmcUtils = {
         } else if (Number.isInteger(value)) {
             return SMCApi.ValueType.DOUBLE;
          */
-        if (value instanceof Number || typeof (value) === "number" || value instanceof this.typeNumber) {
+        if (value instanceof Number || typeof (value) === "number" || value instanceof SmcUtils.typeNumber) {
             const intValue = Math.round(value);
             return value === intValue ? SMCApi.ValueType.LONG : SMCApi.ValueType.DOUBLE;
-        } else if (Object.prototype.toString.call(value) === "[object String]" || value instanceof this.typeString) {
+        } else if (Object.prototype.toString.call(value) === "[object String]" || value instanceof SmcUtils.typeString) {
             return SMCApi.ValueType.STRING;
-        } else if (Array.isArray(value) || value instanceof this.typeBytes) {
+        } else if (Array.isArray(value) || value instanceof SmcUtils.typeBytes) {
             return SMCApi.ValueType.BYTES;
         } else if (value === false || value === true) {
             return SMCApi.ValueType.BOOLEAN;
@@ -1418,7 +1418,7 @@ SmcUtils = {
                         if (Array.isArray(value)) {
                             value = SmcUtils.convertToObjectArray(value, silent);
                             type = SMCApi.ObjectType.OBJECT_ARRAY;
-                        } else {
+                        } else if (!(value instanceof SmcUtils.typeBytes)) {
                             value = SmcUtils.convertToObjectElement(value, silent);
                             type = SMCApi.ObjectType.OBJECT_ELEMENT;
                         }
