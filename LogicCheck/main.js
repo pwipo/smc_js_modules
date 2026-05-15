@@ -37,7 +37,16 @@ JsFactory = function () {
      * This callback type is called `ElementFormat` and is displayed as a global symbol.
      *
      * @callback JsFactory.ElementFormat
-     * @param {Object[]} data
+     * @param {Object[]} out
+     */
+    /**
+     * This callback type is called `FunFull` and is displayed as a global symbol.
+     *
+     * @callback JsFactory.FunFull
+     * @param configurationTool    {SMCApi.ConfigurationTool}
+     * @param executionContextTool {SMCApi.ExecutionContextTool}
+     * @param {Object[]} inputs
+     * @param {Object[][]} lst
      */
 
     /**
@@ -90,12 +99,14 @@ JsFactory = function () {
                 "\n}") :
             null;
         let inputFormatS = SmcUtils.toString(configurationTool.getSetting("inputFormat")).trim();
+        /** @type {ElementFormat} */
         this.inputFormat = inputFormatS ?
             eval("(inputs)=>{\n" +
                 inputFormatS +
                 "\n}") :
             null;
         let inputCheckS = SmcUtils.toString(configurationTool.getSetting("inputCheck")).trim();
+        /** @type {ElementCheck} */
         this.inputCheck = inputCheckS ?
             eval("(inputs)=>{\n" +
                 "return " + inputCheckS + ";" +
@@ -103,7 +114,21 @@ JsFactory = function () {
             null;
         this.inputCheckError = SmcUtils.toString(configurationTool.getSetting("inputCheckError")).trim();
         if (!this.inputCheckError)
-            this.inputCheckError = "input check error"
+            this.inputCheckError = "input check error";
+        let finalSuccessProcessorS = SmcUtils.toString(configurationTool.getSetting("finalSuccessProcessor")).trim();
+        /** @type {FunFull} */
+        this.finalSuccessProcessor = finalSuccessProcessorS ?
+            eval("(configurationTool,executionContextTool, inputs, lst)=>{\n" +
+                finalSuccessProcessorS +
+                "\n}") :
+            null;
+        let finalFailProcessorS = SmcUtils.toString(configurationTool.getSetting("finalFailProcessor")).trim();
+        /** @type {FunFull} */
+        this.finalFailProcessor = finalFailProcessorS ?
+            eval("(configurationTool,executionContextTool, inputs, lst)=>{\n" +
+                finalFailProcessorS +
+                "\n}") :
+            null;
     };
 
     /**
@@ -136,33 +161,47 @@ JsFactory = function () {
             }
 
             let ecId = -1;
-            for (let i = 0; i < that.configuration.length; i++) {
-                const o = that.configuration[i];
-                if (!o.skipECExec && o.params) {
-                    ecId++;
-                    let resultParams = o.params(inputs, ecId, lst);
-                    if (resultParams)
-                        resultParams = that.convertToParams(configurationTool, resultParams);
-                    // configurationTool.loggerTrace("ec params: " + resultParams);
-                    let result = SmcUtils.executeAndGetMessages(executionContextTool, ecId, resultParams);
-                    result = that.convertFromMessages(configurationTool, result, false, o.disableAutoConvert);
-                    if (o.needCheckExist && (!result || result.length === 0)) {
+            let isError = false;
+            try {
+                for (let i = 0; i < that.configuration.length; i++) {
+                    const o = that.configuration[i];
+                    if (!o.skipECExec && o.params) {
+                        ecId++;
+                        let resultParams = o.params(inputs, ecId, lst);
+                        if (resultParams)
+                            resultParams = that.convertToParams(configurationTool, resultParams);
+                        // configurationTool.loggerTrace("ec params: " + resultParams);
+                        let result = SmcUtils.executeAndGetMessages(executionContextTool, ecId, resultParams);
+                        result = that.convertFromMessages(configurationTool, result, false, o.disableAutoConvert);
+                        if (o.needCheckExist && (!result || result.length === 0)) {
+                            executionContextTool.addError(o.error);
+                            executionContextTool.addError(i + 1);
+                            isError = true;
+                            break;
+                        }
+                        if (o.format)
+                            o.format(result);
+                        lst.push(result);
+                    }
+                    if (o.check && !o.check(inputs, i, lst)) {
                         executionContextTool.addError(o.error);
                         executionContextTool.addError(i + 1);
-                        return;
+                        isError = true;
+                        break;
                     }
-                    if (o.format)
-                        o.format(result);
-                    lst.push(result);
                 }
-                if (o.check && !o.check(inputs, i, lst)) {
-                    executionContextTool.addError(o.error);
-                    executionContextTool.addError(i + 1);
-                    return;
+            } catch (e) {
+                isError = true;
+                throw e;
+            } finally {
+                if (isError && that.finalFailProcessor) {
+                    that.finalFailProcessor(configurationTool, executionContextTool, inputs, lst);
+                } else if (!isError && that.finalSuccessProcessor) {
+                    that.finalSuccessProcessor(configurationTool, executionContextTool, inputs, lst);
                 }
             }
 
-            if (that.resultParams) {
+            if (!isError && that.resultParams) {
                 let resultConverted = that.resultParams(inputs, lst, that);
                 if (resultConverted)
                     resultConverted = that.convertToParams(configurationTool, resultConverted);
@@ -182,6 +221,8 @@ JsFactory = function () {
         this.inputFormat = null;
         this.inputCheck = null;
         this.inputCheckError = null;
+        this.finalSuccessProcessor = null;
+        this.finalFailProcessor = null;
     };
 
     /**

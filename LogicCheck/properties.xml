@@ -200,6 +200,94 @@ Example: inputs[0]==="path"
                 <entry k="en" v="Contains a string representing the error that is sent if the check fails."/>
            </description>
         </value>
+        <value>
+            <name>finalSuccessProcessor</name>
+            <type>STRING</type>
+            <value></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Содержит код (тело функции) вызываемое в конце, если всё ок, на языке javascript.
+Аналогичен finalFailProcessor, но вызывается только если не было ошибок.
+Может быть пустым. Полезен для пост обработки и/или сложной финализации.
+Доступны переменные:
+    configurationTool {SMCApi.ConfigurationTool} - содержит ссылку на объект API ConfigurationTool,
+    executionContextTool {SMCApi.ExecutionContextTool} - содержит ссылку на объект API ExecutionContextTool,
+    inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
+    lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+Пример:
+if (inputs[0].val1 === 0)
+    return;
+let v1 = SmcUtils.toString(lst[1][0][0]);
+executionContextTool.addMessage(`- ${v1} -`);
+executionContextTool.getFlowControlTool().executeNow(SMCApi.CommandType.EXECUTE, 0, [1]);
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Contains the code (function body) called at the end if everything is OK, in JavaScript.
+Similar to finalFailProcessor, but is called only if there were no errors.
+May be empty. Useful for post-processing and/or complex finalization.
+Available variables:
+    configurationTool {SMCApi.ConfigurationTool} - contains a reference to the ConfigurationTool API object,
+    executionContextTool {SMCApi.ExecutionContextTool} - contains a reference to the ExecutionContextTool API object,
+    inputs - contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
+    lst - contains an array of arrays of data returned by the context. All data from the called contexts is written here under the corresponding ordinal number.
+Example:
+if (inputs[0].val1 === 0)
+    return;
+let v1 = SmcUtils.toString(lst[1][0][0]);
+executionContextTool.addMessage(`- ${v1} -`);
+executionContextTool.getFlowControlTool().executeNow(SMCApi.CommandType.EXECUTE, 0, [1]);
+                ]]></value>
+                </entry>
+            </description>
+        </value>
+        <value>
+            <name>finalFailProcessor</name>
+            <type>STRING</type>
+            <value></value>
+            <subtype>TEXT</subtype>
+            <description>
+                <entry>
+                    <key>ru</key>
+                    <value><![CDATA[Содержит код (тело функции) вызываемое в конце, если есть ошибки, на языке javascript.
+Аналогичен finalSuccessProcessor но вызывается только если в процессе возникли ошибки.
+Может быть пустым. Полезен для пост обработки и/или сложной финализации.
+Доступны переменные:
+    configurationTool {SMCApi.ConfigurationTool} - содержит ссылку на объект API ConfigurationTool,
+    executionContextTool {SMCApi.ExecutionContextTool} - содержит ссылку на объект API ExecutionContextTool,
+    inputs - содержит массив входящих данных, любой тип. Дополнительно, если входящим значением является массив объектов с одним объектом то он конвертируется в объект.
+    lst - содержит массив массивов возвращаемых контекставми данных. Все данные от вызываемых контекстов записываются сюда под соответствующим порядковым номером.
+Пример:
+if (inputs[0].val1 === 0)
+    return;
+let v1 = SmcUtils.toString(lst[1][0][0]);
+executionContextTool.addMessage(`- ${v1} -`);
+executionContextTool.getFlowControlTool().executeNow(SMCApi.CommandType.EXECUTE, 0, [1]);
+                ]]></value>
+                </entry>
+                <entry>
+                    <key>en</key>
+                    <value><![CDATA[Contains the code (function body) called at the end if errors occur, in JavaScript.
+Similar to finalSuccessProcessor but called only if errors occur during the process.
+May be empty. Useful for post-processing and/or complex finalization.
+Available variables:
+    configurationTool {SMCApi.ConfigurationTool} - contains a reference to the ConfigurationTool API object,
+    executionContextTool {SMCApi.ExecutionContextTool} - contains a reference to the ExecutionContextTool API object,
+    inputs - contains an array of input data, any type. Additionally, if the input value is an array of objects with one object, it is converted to an object.
+    lst - contains an array of arrays of data returned by the context. All data from the called contexts is written here under the corresponding ordinal number.
+Example:
+if (inputs[0].val1 === 0)
+    return;
+let v1 = SmcUtils.toString(lst[1][0][0]);
+executionContextTool.addMessage(`- ${v1} -`);
+executionContextTool.getFlowControlTool().executeNow(SMCApi.CommandType.EXECUTE, 0, [1]);
+                ]]></value>
+                </entry>
+            </description>
+        </value>
     </defaultSettings>
 
     <types>
