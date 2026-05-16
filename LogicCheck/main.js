@@ -60,7 +60,7 @@ JsFactory = function () {
         const that = this;
 
         const regexLst = /^lst\[\d+]$/;
-        let cfgId=0;
+        let cfgId = 0;
         cfgs.forEach(o => {
             cfgId++;
             let n = o.name ? o.name.trim() : `configuration ${cfgId}`;
@@ -74,12 +74,12 @@ JsFactory = function () {
                 name: n,
                 params: !skipECExec ?
                     eval("(inputs, id, lst)=>{\n" +
-                        "return " + (p ? (p === "inputs" || regexLst.test(p) ? p : "[" + p + "]") : "[]") + "; \n" +
+                        (p.contains("return ") ? p : ("return " + (p ? (p === "inputs" || regexLst.test(p) ? p : "[" + p + "]") : "[]") + "; \n")) +
                         "\n}") :
                     null,
                 check: c ?
                     eval("(inputs, id, lst)=>{\n" +
-                        "return " + c + ";" +
+                        (c.contains("return ") ? c : ("return " + c + ";")) +
                         "\n}") :
                     null,
                 error: e ? e : (n + " error"),
@@ -99,7 +99,7 @@ JsFactory = function () {
         /** @type {ResultParamsFunc} */
         this.resultParams = resultParamsS ?
             eval("(inputs, lst, that)=>{\n" +
-                "return " + (resultParamsS === "inputs" || regexLst.test(resultParamsS) ? resultParamsS : "[" + resultParamsS + "]") + ";" +
+                (resultParamsS.contains("return ") ? resultParamsS : ("return " + (resultParamsS === "inputs" || regexLst.test(resultParamsS) ? resultParamsS : "[" + resultParamsS + "]") + ";")) +
                 "\n}") :
             null;
         let inputFormatS = SmcUtils.toString(configurationTool.getSetting("inputFormat")).trim();
@@ -113,7 +113,7 @@ JsFactory = function () {
         /** @type {ElementCheck} */
         this.inputCheck = inputCheckS ?
             eval("(inputs)=>{\n" +
-                "return " + inputCheckS + ";" +
+                (inputCheckS.contains("return ") ? inputCheckS : ("return " + inputCheckS + ";")) +
                 "\n}") :
             null;
         this.inputCheckError = SmcUtils.toString(configurationTool.getSetting("inputCheckError")).trim();
