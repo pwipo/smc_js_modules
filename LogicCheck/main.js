@@ -53,14 +53,17 @@ JsFactory = function () {
      * @param configurationTool    {SMCApi.ConfigurationTool}
      */
     this.start = function (configurationTool) {
-        /** @type {{params: string, check: string, error: string, format: string, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean}[]} */
+        /** @type {{params: string, check: string, error: string, format: string, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean, name: string|null}[]} */
         let cfgs = SmcUtils.convertFromObjectArray(SmcUtils.getObjectArray(configurationTool.getSetting("configuration")), true);
-        /** @type {{params: ElementParams, check: ElementCheck, error: string, format: ElementFormat, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean}[]} */
+        /** @type {{params: ElementParams, check: ElementCheck, error: string, format: ElementFormat, disableAutoConvert: boolean, needCheckExist: boolean, skipECExec: boolean, name: string|null}[]} */
         this.configuration = [];
         const that = this;
 
         const regexLst = /^lst\[\d+]$/;
+        let cfgId=0;
         cfgs.forEach(o => {
+            cfgId++;
+            let n = o.name ? o.name.trim() : `configuration ${cfgId}`;
             let p = o.params ? o.params.trim() : null;
             let c = o.check ? o.check.trim() : null;
             let e = o.error ? o.error.trim() : null;
@@ -68,6 +71,7 @@ JsFactory = function () {
             let skipECExec = o.skipECExec ? o.skipECExec : false;
 
             let obj = {
+                name: n,
                 params: !skipECExec ?
                     eval("(inputs, id, lst)=>{\n" +
                         "return " + (p ? (p === "inputs" || regexLst.test(p) ? p : "[" + p + "]") : "[]") + "; \n" +
@@ -78,7 +82,7 @@ JsFactory = function () {
                         "return " + c + ";" +
                         "\n}") :
                     null,
-                error: e ? e : "ec result check error",
+                error: e ? e : (n + " error"),
                 format: f ?
                     eval("(out)=>{\n" +
                         f +

@@ -64,6 +64,7 @@ responsible.
     disableAutoConvert - если true, то не конвертирует возвращаемые вызываемыми контекстами данные типа ObjectArray в объекты.
     needCheckExist - если true, то проверяет чтобы контекст возвращал данные.
     skipECExec - если true, то эта конфигурация не вызывает контекст исполнения и номер контекста не сдвигается (т.е. следующая конфигурация, например под номером 3 будет вызывать второй контекст).
+    name - имя конфигурации. используется как для описания так и для генерации ошибки если error не указана.
 Каждая конфигурация исполняется последовательно. Алгоритм работы:
     вызывается контекст с соответствующим порядковым номером (если конфигурация первая то и вызывается первый контекст)
     ему передаются параметры, указанные в поле params
@@ -98,6 +99,7 @@ Configuration objects have 4 fields:
     disableAutoConvert - If true, does not convert ObjectArray data returned by calling contexts into objects.
     needCheckExist - if true, checks that the context returns data.
     skipECExec - if true, this configuration does not invoke the execution context and the context number is not shifted (i.e., the next configuration, for example, number 3, will invoke the second context).
+    name - the configuration name. Used both for description and for error generation if error is not specified.
 Each configuration is executed sequentially. The algorithm works as follows:
     the context with the corresponding sequence number is called (if this is the first configuration, the first context is called).
     it is passed the parameters specified in the params field.
