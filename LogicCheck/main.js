@@ -74,7 +74,7 @@ JsFactory = function () {
                 name: n,
                 params: !skipECExec ?
                     eval("(inputs, id, lst)=>{\n" +
-                        (p.contains("return ") ? p : ("return " + (p ? (p === "inputs" || regexLst.test(p) ? p : "[" + p + "]") : "[]") + "; \n")) +
+                        (p ? (p.contains("return ") ? p : ("return " + (p === "inputs" || regexLst.test(p) ? p : "[" + p + "]") + "; \n")) : "return []; \n") +
                         "\n}") :
                     null,
                 check: c ?
